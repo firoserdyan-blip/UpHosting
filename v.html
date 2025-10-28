@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Menonton di UpHosting</title>
     
-    <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
-    <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -22,7 +19,7 @@
             line-height: 1.6;
         }
         .container { 
-            max-width: 1050px; /* Lebar maksimal untuk PC */
+            max-width: 1050px; /* Lebar maksimal besar untuk PC */
             margin: 20px auto; 
             background-color: white; 
             padding: 30px; 
@@ -134,14 +131,14 @@
         /* 💥 MEDIA QUERY: PENGATURAN KHUSUS UNTUK TAMPILAN PONSEL (Video Lebih Besar) */
         @media (max-width: 600px) {
             body {
-                padding: 5px; /* Kurangi padding body di ponsel */
+                padding: 5px; 
             }
             .container {
-                padding: 10px; /* Kurangi padding container di ponsel */
-                border-radius: 0; /* Hilangkan border radius untuk tampilan lebih edge-to-edge */
-                margin: 0 auto; /* Hilangkan margin atas/bawah */
-                box-shadow: none; /* Hilangkan bayangan untuk kesan lebih native */
-                max-width: 100%; /* Pastikan mengambil lebar penuh */
+                padding: 10px; 
+                border-radius: 0; 
+                margin: 0 auto; 
+                box-shadow: none; 
+                max-width: 100%; 
             }
             h1 {
                 margin-top: 5px;
@@ -173,6 +170,30 @@
         const encodedUrl = urlParams.get('id');
         const statusElement = document.getElementById('status');
         const mediaDisplay = document.getElementById('mediaDisplay');
+        
+        // 🌟 KODE POP-UP DARI ADSTERRA (1 & 2) DISIMPAN DI VARIABEL
+        const popupAds = `
+            <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
+            <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
+        `;
+
+        function injectPopupAds() {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = popupAds;
+            
+            // Injeksi kedua script pop-up ke body agar dieksekusi oleh browser
+            Array.from(tempDiv.children).forEach(script => {
+                const newScript = document.createElement('script');
+                Array.from(script.attributes).forEach(attr => {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                if (script.innerHTML) {
+                    newScript.innerHTML = script.innerHTML;
+                }
+                document.body.appendChild(newScript);
+            });
+        }
+
 
         function wrapMedia(content, isPortrait = false) {
             const portraitClass = isPortrait ? ' is-portrait' : '';
@@ -206,6 +227,9 @@
 
              const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
              
+             // 💥 PICU POP-UP SAAT VIDEO NON-YOUTUBE (Drive/Vimeo) MULAI DIMUAT
+             injectPopupAds(); 
+
              delayAndDisplay(iframeContent, isPortraitMode);
              statusElement.textContent = statusText || 'Memuat konten eksternal...';
         }
@@ -240,6 +264,9 @@
             statusElement.textContent = 'Klik tombol Play untuk memuat video YouTube.';
 
             thumbnailElement.addEventListener('click', () => {
+                // 💥 PICU POP-UP SAAT TOMBOL PLAY DI YOUTUBE DIKLIK
+                injectPopupAds(); 
+
                 const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                 
                 delayAndDisplay(iframeContent, isPortraitMode);
