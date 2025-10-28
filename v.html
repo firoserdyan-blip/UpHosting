@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Menonton di UpHosting</title>
+    
     <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
     <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,24 +15,24 @@
         body { 
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
-            padding: 20px; 
+            padding: 5px; /* Padding dikurangi */
             background-color: #f8f9fa; 
             color: #343a40; 
             line-height: 1.6;
         }
         .container { 
-            max-width: 800px; 
-            margin: 20px auto; 
+            max-width: 98%; /* 🌟 LAYAR DIPERBESAR HAMPIR PENUH */
+            margin: 5px auto; 
             background-color: white; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); 
+            padding: 15px; /* Padding kontainer dikurangi */
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
         }
-        h1 { color: #2c3e50; font-weight: 700; margin-bottom: 20px; }
-        #status { color: #007bff; font-weight: 600; margin-bottom: 20px; }
+        h1 { color: #2c3e50; font-weight: 700; margin-bottom: 10px; }
+        #status { color: #007bff; font-weight: 600; margin-bottom: 15px; }
         
         /* Media Container */
-        .media-container { margin-top: 20px; border-radius: 8px; overflow: hidden; }
+        .media-container { margin-top: 15px; border-radius: 8px; overflow: hidden; }
         
         /* Container Responsif */
         .media-responsive {
@@ -59,19 +60,6 @@
             margin: 0 auto; 
         }
 
-        /* Watermark Logo */
-        .logo-watermark {
-            position: absolute;
-            top: 15px; 
-            right: 15px; 
-            width: 60px; /* Lebar logo */
-            height: auto;
-            z-index: 20; 
-            opacity: 0.8; 
-            display: none; /* Sembunyikan default, tampilkan via JS */
-        }
-
-
         /* Thumbnail YouTube dan Tombol Play */
         .youtube-thumb-wrapper {
             position: relative;
@@ -80,9 +68,6 @@
             height: 100%;
         }
         .youtube-thumb-wrapper img {
-            width: 100%; 
-            height: 100%;
-            object-fit: cover; 
             opacity: 0.8;
             transition: opacity 0.3s;
         }
@@ -94,19 +79,11 @@
             top: 55%; 
             left: 50%; 
             transform: translate(-50%, -50%); 
-            
             width: 90px;
             height: 60px;
             background: rgba(255, 0, 0, 0.8);
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             z-index: 10;
-            transition: background 0.3s;
-        }
-        .play-button:hover {
-            background: red;
         }
         .play-button::before {
             content: '▶️';
@@ -128,7 +105,6 @@
             justify-content: center;
             color: white; 
             font-size: 1.2em;
-            font-weight: 600;
         }
         .loading-screen::after {
             content: '⏳'; 
@@ -140,7 +116,7 @@
         }
 
         /* Description Section */
-        .description-section { margin-top: 40px; padding: 25px; border-top: 2px solid #e9ecef; text-align: left; color: #495057; font-size: 15px; }
+        .description-section { margin-top: 30px; padding: 15px; border-top: 1px solid #e9ecef; text-align: left; color: #495057; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -156,7 +132,7 @@
         
         <div class="description-section">
             <h3>Tentang UpHosting</h3>
-            <p>Jika video lambat dimuat, coba klik tombol play di thumbnail. Pastikan link Google Drive sudah disetel ke "Siapa saja yang memiliki link".</p>
+            <p>Jika video lambat dimuat, coba klik tombol play. Pastikan link Google Drive sudah diatur "Siapa saja yang memiliki link".</p>
         </div>
     </div>
 
@@ -165,12 +141,10 @@
         const encodedUrl = urlParams.get('id');
         const statusElement = document.getElementById('status');
         const mediaDisplay = document.getElementById('mediaDisplay');
-        const logoPath = 'Gemini_Generated_Image_6hni9t6hni9t6hni.jpg'; 
 
         function wrapMedia(content, isPortrait = false) {
             const portraitClass = isPortrait ? ' is-portrait' : '';
             return `<div class="media-responsive${portraitClass}">
-                        <img src="${logoPath}" class="logo-watermark" id="videoLogo" alt="Logo">
                         ${content}
                     </div>`;
         }
@@ -180,22 +154,10 @@
             
             const loadingScreenContent = `<div class="loading-screen"></div>`;
             mediaDisplay.innerHTML = wrapMedia(loadingScreenContent, isPortraitMode);
-            
-            const logoElement = mediaDisplay.querySelector('#videoLogo');
-            if (logoElement) {
-                logoElement.style.display = 'block';
-            }
-
 
             setTimeout(() => {
                 mediaDisplay.innerHTML = wrapMedia(content, isPortraitMode);
                 statusElement.textContent = 'Video siap diputar.';
-                
-                const finalLogoElement = mediaDisplay.querySelector('#videoLogo');
-                 if (finalLogoElement) {
-                    finalLogoElement.style.display = 'block';
-                }
-
             }, 2000); 
         }
         
@@ -238,15 +200,9 @@
             playButton.className = 'play-button';
             thumbnailElement.appendChild(playButton);
             
-            const logoInThumb = document.createElement('img');
-            logoInThumb.src = logoPath;
-            logoInThumb.className = 'logo-watermark';
-            logoInThumb.style.display = 'block'; 
-
             mediaDisplay.innerHTML = wrapMedia('', isPortraitMode);
             const wrapper = mediaDisplay.querySelector('.media-responsive');
             wrapper.appendChild(thumbnailElement);
-            wrapper.appendChild(logoInThumb); 
             
             statusElement.textContent = 'Klik tombol Play untuk memuat video YouTube.';
 
@@ -292,11 +248,6 @@
                     const mediaContent = `<img src="${mediaUrl}" alt="Media UpHosting">`;
                     mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode); 
                     statusElement.textContent = 'Foto dimuat.';
-                    const logoElement = mediaDisplay.querySelector('#videoLogo');
-                    if (logoElement) {
-                        logoElement.style.display = 'block';
-                    }
-
                 } else {
                     loadUniversalIframe(mediaUrl, isPortraitMode);
                 }
