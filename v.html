@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Menonton di UpHosting</title>
+    <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
+    <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -57,7 +59,7 @@
             margin: 0 auto; 
         }
 
-        /* 🌟 CSS BARU: Watermark Logo */
+        /* Watermark Logo */
         .logo-watermark {
             position: absolute;
             top: 15px; 
@@ -145,6 +147,8 @@
     <div class="container">
         <h1>Menonton di UpHosting</h1>
         
+        <script async="async" data-cfasync="false" src="//carvedseptembernest.com/bd05c5b36833b9ca35a0cf635cfc4c78/invoke.js"></script>
+        <div id="container-bd05c5b36833b9ca35a0cf635cfc4c78"></div>
         <div class="media-container">
             <p id="status">Memuat konten...</p>
             <div id="mediaDisplay"></div>
@@ -161,12 +165,10 @@
         const encodedUrl = urlParams.get('id');
         const statusElement = document.getElementById('status');
         const mediaDisplay = document.getElementById('mediaDisplay');
-        // 🌟 ELEMEN BARU: Logo Watermark
         const logoPath = 'Gemini_Generated_Image_6hni9t6hni9t6hni.jpg'; 
 
         function wrapMedia(content, isPortrait = false) {
             const portraitClass = isPortrait ? ' is-portrait' : '';
-            // 🌟 TAMBAHKAN TAG LOGO KE DALAM WRAPPER
             return `<div class="media-responsive${portraitClass}">
                         <img src="${logoPath}" class="logo-watermark" id="videoLogo" alt="Logo">
                         ${content}
@@ -179,7 +181,6 @@
             const loadingScreenContent = `<div class="loading-screen"></div>`;
             mediaDisplay.innerHTML = wrapMedia(loadingScreenContent, isPortraitMode);
             
-            // Tampilkan logo saat loading
             const logoElement = mediaDisplay.querySelector('#videoLogo');
             if (logoElement) {
                 logoElement.style.display = 'block';
@@ -190,7 +191,6 @@
                 mediaDisplay.innerHTML = wrapMedia(content, isPortraitMode);
                 statusElement.textContent = 'Video siap diputar.';
                 
-                // Pastikan logo tetap terlihat di atas video
                 const finalLogoElement = mediaDisplay.querySelector('#videoLogo');
                  if (finalLogoElement) {
                     finalLogoElement.style.display = 'block';
@@ -238,16 +238,15 @@
             playButton.className = 'play-button';
             thumbnailElement.appendChild(playButton);
             
-            // 🌟 Tampilkan logo di thumbnail
             const logoInThumb = document.createElement('img');
             logoInThumb.src = logoPath;
             logoInThumb.className = 'logo-watermark';
-            logoInThumb.style.display = 'block'; // Tampilkan saat thumbnail
+            logoInThumb.style.display = 'block'; 
 
             mediaDisplay.innerHTML = wrapMedia('', isPortraitMode);
             const wrapper = mediaDisplay.querySelector('.media-responsive');
             wrapper.appendChild(thumbnailElement);
-            wrapper.appendChild(logoInThumb); // Tambahkan logo di atas thumbnail
+            wrapper.appendChild(logoInThumb); 
             
             statusElement.textContent = 'Klik tombol Play untuk memuat video YouTube.';
 
@@ -280,7 +279,6 @@
                     loadUniversalIframe(mediaUrl, isPortraitMode, 'Memuat pemutar Vimeo...');
 
                 } else if (isGoogleDrive) { 
-                    // FIX FULL SCREEN GOOGLE DRIVE
                     const iframeContent = `<iframe src="${mediaUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
                     delayAndDisplay(iframeContent, isPortraitMode);
                     statusElement.textContent = 'Memuat video Google Drive...';
@@ -294,14 +292,12 @@
                     const mediaContent = `<img src="${mediaUrl}" alt="Media UpHosting">`;
                     mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode); 
                     statusElement.textContent = 'Foto dimuat.';
-                    // Tampilkan logo untuk gambar
                     const logoElement = mediaDisplay.querySelector('#videoLogo');
                     if (logoElement) {
                         logoElement.style.display = 'block';
                     }
 
                 } else {
-                    // FALLBACK: Mencoba memuat link sebagai IFRAME Universal
                     loadUniversalIframe(mediaUrl, isPortraitMode);
                 }
 
