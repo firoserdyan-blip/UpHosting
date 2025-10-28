@@ -13,24 +13,24 @@
         body { 
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
-            padding: 5px; 
+            padding: 20px; /* REVERTED: Padding body kembali normal */
             background-color: #f8f9fa; 
             color: #343a40; 
             line-height: 1.6;
         }
         .container { 
-            max-width: 98%; /* LAYAR DIPERBESAR HAMPIR PENUH */
-            margin: 5px auto; 
+            max-width: 800px; /* REVERTED: Maksimal lebar 800px (tampilan kotak rapi) */
+            margin: 20px auto; /* REVERTED: Kembali ke tengah */
             background-color: white; 
-            padding: 15px; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+            padding: 30px; /* REVERTED: Padding kontainer kembali normal */
+            border-radius: 12px; 
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Reverted */
         }
-        h1 { color: #2c3e50; font-weight: 700; margin-bottom: 10px; }
-        #status { color: #007bff; font-weight: 600; margin-bottom: 15px; }
+        h1 { color: #2c3e50; font-weight: 700; margin-bottom: 20px; }
+        #status { color: #007bff; font-weight: 600; margin-bottom: 20px; }
         
         /* Media Container */
-        .media-container { margin-top: 15px; border-radius: 8px; overflow: hidden; }
+        .media-container { margin-top: 20px; border-radius: 8px; overflow: hidden; }
         
         /* Container Responsif */
         .media-responsive {
@@ -114,7 +114,7 @@
         }
 
         /* Description Section */
-        .description-section { margin-top: 30px; padding: 15px; border-top: 1px solid #e9ecef; text-align: left; color: #495057; font-size: 14px; }
+        .description-section { margin-top: 40px; padding: 25px; border-top: 2px solid #e9ecef; text-align: left; color: #495057; font-size: 15px; }
     </style>
 </head>
 <body>
@@ -149,6 +149,7 @@
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = popupAds;
             
+            // Injeksi kode pop-up ke body agar dipicu
             Array.from(tempDiv.children).forEach(script => {
                 const newScript = document.createElement('script');
                 Array.from(script.attributes).forEach(attr => {
