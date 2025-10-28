@@ -57,6 +57,19 @@
             margin: 0 auto; 
         }
 
+        /* 🌟 CSS BARU: Watermark Logo */
+        .logo-watermark {
+            position: absolute;
+            top: 15px; 
+            right: 15px; 
+            width: 60px; /* Lebar logo */
+            height: auto;
+            z-index: 20; 
+            opacity: 0.8; 
+            display: none; /* Sembunyikan default, tampilkan via JS */
+        }
+
+
         /* Thumbnail YouTube dan Tombol Play */
         .youtube-thumb-wrapper {
             position: relative;
@@ -75,7 +88,6 @@
             opacity: 1;
         }
         .play-button {
-            /* POSISI TOMBOL PLAY FINAL: 55% */
             position: absolute; 
             top: 55%; 
             left: 50%; 
@@ -117,7 +129,7 @@
             font-weight: 600;
         }
         .loading-screen::after {
-            content: '⏳'; /* Ikon loading */
+            content: '⏳'; 
             animation: pulse 1s infinite alternate;
         }
         @keyframes pulse {
@@ -149,10 +161,16 @@
         const encodedUrl = urlParams.get('id');
         const statusElement = document.getElementById('status');
         const mediaDisplay = document.getElementById('mediaDisplay');
+        // 🌟 ELEMEN BARU: Logo Watermark
+        const logoPath = 'Gemini_Generated_Image_6hni9t6hni9t6hni.jpg'; 
 
         function wrapMedia(content, isPortrait = false) {
             const portraitClass = isPortrait ? ' is-portrait' : '';
-            return `<div class="media-responsive${portraitClass}">${content}</div>`;
+            // 🌟 TAMBAHKAN TAG LOGO KE DALAM WRAPPER
+            return `<div class="media-responsive${portraitClass}">
+                        <img src="${logoPath}" class="logo-watermark" id="videoLogo" alt="Logo">
+                        ${content}
+                    </div>`;
         }
         
         function delayAndDisplay(content, isPortraitMode) {
@@ -160,16 +178,29 @@
             
             const loadingScreenContent = `<div class="loading-screen"></div>`;
             mediaDisplay.innerHTML = wrapMedia(loadingScreenContent, isPortraitMode);
+            
+            // Tampilkan logo saat loading
+            const logoElement = mediaDisplay.querySelector('#videoLogo');
+            if (logoElement) {
+                logoElement.style.display = 'block';
+            }
+
 
             setTimeout(() => {
                 mediaDisplay.innerHTML = wrapMedia(content, isPortraitMode);
                 statusElement.textContent = 'Video siap diputar.';
+                
+                // Pastikan logo tetap terlihat di atas video
+                const finalLogoElement = mediaDisplay.querySelector('#videoLogo');
+                 if (finalLogoElement) {
+                    finalLogoElement.style.display = 'block';
+                }
+
             }, 2000); 
         }
         
         function loadUniversalIframe(url, isPortraitMode, statusText) {
              let embedUrl = url;
-             // Coba tambahkan parameter autoplay jika URL belum memilikinya
              if (url.includes('?')) {
                  if (!url.includes('autoplay')) {
                      embedUrl += '&autoplay=1';
@@ -178,7 +209,6 @@
                  embedUrl += '?autoplay=1';
              }
 
-             // MEMASTIKAN allow="fullscreen" DAN allowfullscreen
              const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
              
              delayAndDisplay(iframeContent, isPortraitMode);
@@ -208,9 +238,16 @@
             playButton.className = 'play-button';
             thumbnailElement.appendChild(playButton);
             
+            // 🌟 Tampilkan logo di thumbnail
+            const logoInThumb = document.createElement('img');
+            logoInThumb.src = logoPath;
+            logoInThumb.className = 'logo-watermark';
+            logoInThumb.style.display = 'block'; // Tampilkan saat thumbnail
+
             mediaDisplay.innerHTML = wrapMedia('', isPortraitMode);
             const wrapper = mediaDisplay.querySelector('.media-responsive');
             wrapper.appendChild(thumbnailElement);
+            wrapper.appendChild(logoInThumb); // Tambahkan logo di atas thumbnail
             
             statusElement.textContent = 'Klik tombol Play untuk memuat video YouTube.';
 
@@ -232,7 +269,7 @@
                 const isYouTube = mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be');
                 const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(mediaUrl);
                 const isDirectVideo = /\.(mp4|mov|webm)$/i.test(mediaUrl);
-                const isGoogleDrive = mediaUrl.includes('drive.google.com/file/d/') && mediaUrl.includes('/preview'); // Deteksi Google Drive
+                const isGoogleDrive = mediaUrl.includes('drive.google.com/file/d/') && mediaUrl.includes('/preview'); 
                 const isPortraitMode = mediaUrl.toLowerCase().includes('ratio=portrait') || mediaUrl.toLowerCase().includes('rasio=portrait');
                 
                 
@@ -243,8 +280,7 @@
                     loadUniversalIframe(mediaUrl, isPortraitMode, 'Memuat pemutar Vimeo...');
 
                 } else if (isGoogleDrive) { 
-                    // KHUSUS GOOGLE DRIVE: JANGAN tambahkan parameter.
-                    // 🌟 FIX FULL SCREEN DI SINI
+                    // FIX FULL SCREEN GOOGLE DRIVE
                     const iframeContent = `<iframe src="${mediaUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
                     delayAndDisplay(iframeContent, isPortraitMode);
                     statusElement.textContent = 'Memuat video Google Drive...';
@@ -258,6 +294,11 @@
                     const mediaContent = `<img src="${mediaUrl}" alt="Media UpHosting">`;
                     mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode); 
                     statusElement.textContent = 'Foto dimuat.';
+                    // Tampilkan logo untuk gambar
+                    const logoElement = mediaDisplay.querySelector('#videoLogo');
+                    if (logoElement) {
+                        logoElement.style.display = 'block';
+                    }
 
                 } else {
                     // FALLBACK: Mencoba memuat link sebagai IFRAME Universal
