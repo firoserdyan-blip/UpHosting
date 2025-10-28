@@ -101,7 +101,7 @@
             padding-left: 5px; 
         }
 
-        /* Loading Screen */
+        /* Loading Screen (INI TIDAK LAYAR PENUH) */
         .loading-screen {
             position: absolute;
             top: 0;
@@ -131,7 +131,7 @@
         /* 🌟 MEDIA QUERY: PENGATURAN KHUSUS UNTUK PONSEL (Tampilan Rapi Maksimal) */
         @media (max-width: 600px) {
             body {
-                padding: 10px; /* Memberi jarak tepi agar tidak menempel ke sisi layar */
+                padding: 10px; 
             }
             .container {
                 padding: 15px; 
@@ -177,21 +177,29 @@
             <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
         `;
 
+        let popupInjected = false;
+
         function injectPopupAds() {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = popupAds;
-            
-            // Injeksi kedua script pop-up ke body agar dieksekusi oleh browser
-            Array.from(tempDiv.children).forEach(script => {
-                const newScript = document.createElement('script');
-                Array.from(script.attributes).forEach(attr => {
-                    newScript.setAttribute(attr.name, attr.value);
+            if (popupInjected) return; // Pastikan hanya dipicu sekali
+
+            // Tambahkan penundaan singkat agar tidak memblokir pemuatan awal
+            setTimeout(() => {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = popupAds;
+                
+                // Injeksi kedua script pop-up ke body agar dieksekusi oleh browser
+                Array.from(tempDiv.children).forEach(script => {
+                    const newScript = document.createElement('script');
+                    Array.from(script.attributes).forEach(attr => {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+                    if (script.innerHTML) {
+                        newScript.innerHTML = script.innerHTML;
+                    }
+                    document.body.appendChild(newScript);
                 });
-                if (script.innerHTML) {
-                    newScript.innerHTML = script.innerHTML;
-                }
-                document.body.appendChild(newScript);
-            });
+                popupInjected = true;
+            }, 100); // Penundaan 100ms
         }
 
 
@@ -205,6 +213,7 @@
         function delayAndDisplay(content, isPortraitMode) {
             statusElement.textContent = 'Memuat konten (2 detik)...'; 
             
+            // Loading screen hanya muncul di area video (media-responsive)
             const loadingScreenContent = `<div class="loading-screen"></div>`;
             mediaDisplay.innerHTML = wrapMedia(loadingScreenContent, isPortraitMode);
 
