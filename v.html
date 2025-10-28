@@ -13,8 +13,8 @@
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
             padding: 20px; 
-            background-color: #f8f9fa; /* Light grey background */
-            color: #343a40; /* Darker text */
+            background-color: #f8f9fa; 
+            color: #343a40; 
             line-height: 1.6;
         }
         .container { 
@@ -23,7 +23,7 @@
             background-color: white; 
             padding: 30px; 
             border-radius: 12px; 
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Softer, deeper shadow */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); 
         }
         h1 { 
             color: #2c3e50; 
@@ -32,25 +32,52 @@
         }
         .media-container { 
             margin-top: 20px; 
-            border-radius: 8px; /* Rounded corners for media container */
-            overflow: hidden; /* Ensures media respects border-radius */
+            border-radius: 8px; 
+            overflow: hidden; 
         }
+        
+        /* Media Display Container (Wrapper) */
         #mediaDisplay { 
             width: 100%; 
-            height: auto; 
-            min-height: 400px; 
-            background-color: #000; /* Black background for player area */
+            background-color: #000; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             color: white; 
             font-size: 18px;
         }
-        #mediaDisplay iframe, #mediaDisplay video, #mediaDisplay img {
-            border-radius: 8px; /* Round corners for the media itself */
+        
+        /* 🌟 CSS BARU: Container Responsif untuk mempertahankan rasio (16:9 Landscape default) */
+        .media-responsive {
+            position: relative;
+            padding-bottom: 56.25%; /* Rasio 16:9 (Tinggi adalah 56.25% dari lebar) */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            margin: auto; /* Memastikan div bisa di-pusatkan */
+            border-radius: 8px;
         }
+
+        /* Memastikan iframe, video, atau image mengisi container responsive */
+        .media-responsive iframe, 
+        .media-responsive video, 
+        .media-responsive img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Penting untuk gambar agar tidak terpotong */
+        }
+        
+        /* 🌟 KODE BARU: Penyesuaian khusus untuk Portrait (9:16) */
+        .media-responsive.is-portrait {
+            padding-bottom: 177.77%; /* Rasio 9:16 (Tinggi adalah 177.77% dari lebar) */
+            max-width: 400px; /* Batasi lebar portrait agar tidak terlalu besar di desktop */
+        }
+
         #status {
-            color: #007bff; /* Blue for status messages */
+            color: #007bff; 
             font-weight: 600;
             margin-bottom: 20px;
         }
@@ -59,9 +86,9 @@
         .description-section { 
             margin-top: 40px; 
             padding: 25px; 
-            border-top: 2px solid #e9ecef; /* Separator line */
+            border-top: 2px solid #e9ecef; 
             text-align: left; 
-            color: #495057; /* Slightly darker text */
+            color: #495057; 
             font-size: 15px;
         }
         .description-section h3 {
@@ -84,7 +111,7 @@
         
         <div class="description-section">
             <h3>Tentang UpHosting</h3>
-            <p>UpHosting adalah solusi hosting media online Anda yang cepat dan mudah. Kami memungkinkan Anda berbagi video dan foto dengan link yang rapi dan profesional. Cukup unggah konten Anda ke platform terkemuka seperti Vimeo atau YouTube, dapatkan URL publiknya, dan UpHosting akan menyajikan link pendek yang bisa Anda sebarkan ke siapa saja.</p>
+            <p>UpHosting adalah solusi hosting media online Anda yang cepat dan mudah. Kami memungkinkan Anda berbagi video dan foto dengan link yang rapi dan profesional. Cukup unggah konten Anda ke platform terkemuka, dapatkan URL publiknya, dan UpHosting akan menyajikan link pendek yang bisa Anda sebarkan ke siapa saja.</p>
             <p>Fokus kami adalah pada kesederhanaan dan aksesibilitas, memastikan media Anda dapat diakses dengan mudah dan cepat oleh audiens Anda di seluruh dunia. Mulai berbagi momen berharga Anda sekarang juga!</p>
         </div>
     </div>
@@ -96,22 +123,37 @@
         const statusElement = document.getElementById('status');
         const mediaDisplay = document.getElementById('mediaDisplay');
 
+        // 🌟 FUNGSI BARU: Fungsi untuk membungkus media dengan container responsive
+        function wrapMedia(content, isPortrait = false) {
+            const portraitClass = isPortrait ? ' is-portrait' : '';
+            return `
+                <div class="media-responsive${portraitClass}">
+                    ${content}
+                </div>
+            `;
+        }
+
+
         if (encodedUrl) {
             try {
                 // 2. Dekode ID kembali ke URL Asli
                 const mediaUrl = atob(encodedUrl.replace(/_/g, '/').replace(/-/g, '+'));
                 statusElement.textContent = `Memuat media Anda...`;
 
-                // 3. Tentukan Tipe Konten
+                // 3. Tentukan Tipe Konten dan cek parameter rasio
                 const isVimeo = mediaUrl.includes('vimeo.com/video/');
                 const isYouTube = mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be');
                 const isImage = mediaUrl.endsWith('.jpg') || mediaUrl.endsWith('.jpeg') || mediaUrl.endsWith('.png') || mediaUrl.endsWith('.gif') || mediaUrl.endsWith('.webp');
                 const isDirectVideo = mediaUrl.endsWith('.mp4') || mediaUrl.endsWith('.mov') || mediaUrl.endsWith('.webm');
+                const isPortraitMode = mediaUrl.toLowerCase().includes('ratio=portrait') || mediaUrl.toLowerCase().includes('rasio=portrait');
                 
+                let mediaContent = '';
+                let embedUrl = mediaUrl;
+
                 if (isVimeo || isYouTube) {
-                    let embedUrl = mediaUrl;
-                    
+                    // Penanganan YouTube & Vimeo
                     if (isYouTube) {
+                        // ... (Logika penanganan YouTube)
                         if (mediaUrl.includes('youtube.com/watch?v=')) {
                             const videoId = mediaUrl.split('v=')[1].split('&')[0];
                             embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
@@ -123,22 +165,34 @@
                          embedUrl = mediaUrl.includes('?') ? mediaUrl + '&autoplay=1' : mediaUrl + '?autoplay=1';
                     }
 
-                    mediaDisplay.innerHTML = `
-                        <iframe width="100%" height="400" 
+                    // Tampilkan Iframe/Video Player
+                    mediaContent = `
+                        <iframe 
                             src="${embedUrl}" 
                             frameborder="0" 
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                             allowfullscreen>
                         </iframe>
                     `;
-                } else if (isImage) {
-                    statusElement.textContent = 'Menampilkan Foto...';
-                    mediaDisplay.innerHTML = `<img src="${mediaUrl}" style="max-width: 100%; height: auto; max-height: 600px; display: block; margin: auto; border-radius: 8px;">`;
+                    // Terapkan container 16:9 atau Portrait jika ada parameter
+                    mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode);
+
+
                 } else if (isDirectVideo) {
+                    // Penanganan File Video Langsung (.mp4, .mov, dll.)
                     statusElement.textContent = 'Menampilkan Video...';
-                     mediaDisplay.innerHTML = `<video controls autoplay style="max-width: 100%; height: auto; min-height: 400px; background: black; border-radius: 8px;"><source src="${mediaUrl}"></video>`;
-                } 
-                else {
+                    mediaContent = `<video controls autoplay><source src="${mediaUrl}"></video>`;
+                    mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode);
+
+                } else if (isImage) {
+                    // Penanganan Gambar
+                    statusElement.textContent = 'Menampilkan Foto...';
+                    mediaContent = `<img src="${mediaUrl}" alt="Media UpHosting">`;
+                    
+                    // Untuk Gambar: Terapkan wrapper jika itu portrait, jika tidak, biarkan default
+                    mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode); 
+
+                } else {
                     statusElement.textContent = 'Gagal: Tipe media tidak didukung atau link tidak valid.';
                     mediaDisplay.innerHTML = '<p style="color: red;">Link tontonan tidak valid.</p>';
                 }
