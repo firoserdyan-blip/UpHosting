@@ -39,7 +39,7 @@
             overflow: hidden;
             max-width: 100%;
             border-radius: 8px;
-            background-color: black; /* Penting: Warna default kontainer saat loading adalah hitam */
+            background-color: black; 
         }
         .media-responsive iframe, 
         .media-responsive video, 
@@ -63,9 +63,7 @@
             cursor: pointer;
             width: 100%;
             height: 100%;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            /* ❌ Flexbox dihapus karena tidak akurat */
         }
         .youtube-thumb-wrapper img {
             width: 100%; 
@@ -78,6 +76,12 @@
             opacity: 1;
         }
         .play-button {
+            /* 🌟 PERBAIKAN KRITIS: Menengahkan tombol secara universal */
+            position: absolute; 
+            top: 50%; /* Pindah 50% dari atas */
+            left: 50%; /* Pindah 50% dari kiri */
+            transform: translate(-50%, -50%); /* Geser ke kiri-atas sebesar setengah ukuran tombol */
+            
             width: 90px;
             height: 60px;
             background: rgba(255, 0, 0, 0.8);
@@ -98,7 +102,7 @@
             padding-left: 5px; 
         }
 
-        /* 🌟 CSS BARU: Loading Screen */
+        /* Loading Screen */
         .loading-screen {
             position: absolute;
             top: 0;
@@ -112,6 +116,15 @@
             color: white; 
             font-size: 1.2em;
             font-weight: 600;
+        }
+        /* 🌟 PERBAIKAN: Hilangkan teks iklan, hanya biarkan loading icon (Opsional) */
+        .loading-screen::after {
+            content: '⏳'; /* Bisa diganti dengan ikon atau teks lain */
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
         }
 
         /* Description Section */
@@ -129,7 +142,7 @@
         
         <div class="description-section">
             <h3>Tentang UpHosting</h3>
-            <p>Jika video lambat dimuat, coba klik tombol play di thumbnail. UpHosting menggunakan link pihak ketiga (YouTube/Vimeo) untuk memuat media Anda.</p>
+            <p>Jika video lambat dimuat, coba klik tombol play di thumbnail. UpHosting menggunakan link pihak ketiga untuk memuat media Anda.</p>
         </div>
     </div>
 
@@ -144,16 +157,11 @@
             return `<div class="media-responsive${portraitClass}">${content}</div>`;
         }
         
-        // 🌟 FUNGSI BARU: Fungsi untuk menampilkan layar hitam 2 detik
-        function delayAndDisplay(content, isPortraitMode, statusLoadingText) {
-            statusElement.textContent = statusLoadingText;
+        function delayAndDisplay(content, isPortraitMode) {
+            statusElement.textContent = 'Memuat konten (2 detik)...'; // Status bar tetap ada
             
-            // 1. Tampilkan layar hitam loading (Iklan)
-            const loadingScreenContent = `
-                <div class="loading-screen">
-                    Memuat Iklan/Konten... (2 detik)
-                </div>
-            `;
+            // 1. Tampilkan layar hitam loading (tanpa teks "Iklan")
+            const loadingScreenContent = `<div class="loading-screen"></div>`;
             mediaDisplay.innerHTML = wrapMedia(loadingScreenContent, isPortraitMode);
 
             // 2. Tunda selama 2 detik
@@ -161,15 +169,15 @@
                 // 3. Setelah 2 detik, masukkan konten video/iframe yang sebenarnya
                 mediaDisplay.innerHTML = wrapMedia(content, isPortraitMode);
                 statusElement.textContent = 'Video siap diputar.';
-            }, 2000); // 2000 milidetik = 2 detik
+            }, 2000); 
         }
         
 
         function loadYouTubeVideo(mediaUrl, isPortraitMode) {
             const videoIdMatch = mediaUrl.match(/(?:v=|\/embed\/|youtu\.be\/|\/v\/|\/e\/|watch\?v=|&v=)([a-zA-Z0-9_-]{11})/);
             if (!videoIdMatch) {
-                statusElement.textContent = 'Gagal: ID YouTube tidak ditemukan.';
-                mediaDisplay.innerHTML = '<p style="color: red;">Link YouTube tidak valid.</p>';
+                // Jika ID tidak ditemukan, fallback ke pemuatan iframe universal
+                loadUniversalIframe(mediaUrl, isPortraitMode, "Link YouTube tidak valid. Mencoba memuat langsung...");
                 return;
             }
             const videoId = videoIdMatch[1];
@@ -177,6 +185,7 @@
             const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
             const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
 
+            // Membuat elemen thumbnail dan tombol play
             const thumbnailElement = document.createElement('div');
             thumbnailElement.className = 'youtube-thumb-wrapper';
             
@@ -198,10 +207,17 @@
             thumbnailElement.addEventListener('click', () => {
                 const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                 
-                // 🌟 Panggil delayAndDisplay untuk jeda 2 detik
-                delayAndDisplay(iframeContent, isPortraitMode, 'Menampilkan Iklan...');
+                // Panggil delayAndDisplay untuk jeda 2 detik
+                delayAndDisplay(iframeContent, isPortraitMode);
 
             }, { once: true }); 
+        }
+
+        // 🌟 FUNGSI BARU: Mendukung IFRAME Universal
+        function loadUniversalIframe(url, isPortraitMode, statusText) {
+             const iframeContent = `<iframe src="${url}" frameborder="0" allow="fullscreen" allowfullscreen></iframe>`;
+             delayAndDisplay(iframeContent, isPortraitMode);
+             statusElement.textContent = statusText || 'Memuat konten eksternal...';
         }
         
         // --- Logic Utama ---
@@ -221,17 +237,19 @@
                     loadYouTubeVideo(mediaUrl, isPortraitMode);
 
                 } else if (isVimeo) {
+                    // Vimeo dimuat langsung dan ditunda 2 detik
                     const embedUrl = mediaUrl.includes('?') ? mediaUrl + '&autoplay=1' : mediaUrl + '?autoplay=1';
                     const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                     
-                    // 🌟 Panggil delayAndDisplay untuk jeda 2 detik
-                    delayAndDisplay(iframeContent, isPortraitMode, 'Memuat pemutar Vimeo (Iklan)...');
+                    delayAndDisplay(iframeContent, isPortraitMode);
+                    statusElement.textContent = 'Memuat pemutar Vimeo...';
 
                 } else if (isDirectVideo) {
+                    // File Video Langsung
                     const mediaContent = `<video controls autoplay><source src="${mediaUrl}"></video>`;
                     
-                    // 🌟 Panggil delayAndDisplay untuk jeda 2 detik
-                    delayAndDisplay(mediaContent, isPortraitMode, 'Memuat video (Iklan)...');
+                    delayAndDisplay(mediaContent, isPortraitMode);
+                    statusElement.textContent = 'Memuat video langsung...';
 
                 } else if (isImage) {
                     // Gambar dimuat instan
@@ -240,8 +258,8 @@
                     statusElement.textContent = 'Foto dimuat.';
 
                 } else {
-                    statusElement.textContent = 'Gagal: Tipe media tidak didukung atau link tidak valid.';
-                    mediaDisplay.innerHTML = '<p style="color: red;">Link tontonan tidak valid.</p>';
+                    // 🌟 FALLBACK: Mencoba memuat link sebagai IFRAME Universal (apapun sumbernya)
+                    loadUniversalIframe(mediaUrl, isPortraitMode);
                 }
 
             } catch (e) {
