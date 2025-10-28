@@ -9,19 +9,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Utama */
+        /* CSS Utama (Berlaku untuk PC/Desktop) */
         body { 
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
-            padding: 20px; /* Padding default untuk PC */
-            background-color: #f8f9fa; 
+            padding: 20px; 
+            background-color: #f8f9fa; /* Latar belakang abu-abu muda */
             color: #343a40; 
             line-height: 1.6;
         }
         .container { 
             max-width: 1050px; /* Lebar maksimal besar untuk PC */
             margin: 20px auto; 
-            background-color: white; 
+            background-color: white; /* Kontainer berwarna putih */
             padding: 30px; 
             border-radius: 12px; 
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); 
@@ -32,7 +32,7 @@
         /* Media Container */
         .media-container { margin-top: 20px; border-radius: 8px; overflow: hidden; }
         
-        /* Container Responsif */
+        /* Container Responsif (Membuat video menyesuaikan 16:9) */
         .media-responsive {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
@@ -58,7 +58,7 @@
             margin: 0 auto; 
         }
 
-        /* Thumbnail YouTube dan Tombol Play */
+        /* Thumbnail YouTube dan Tombol Play (Kode lainnya tidak diubah) */
         .youtube-thumb-wrapper {
             position: relative;
             cursor: pointer;
@@ -101,7 +101,7 @@
             padding-left: 5px; 
         }
 
-        /* Loading Screen (Jeda 2 Detik) */
+        /* Loading Screen */
         .loading-screen {
             position: absolute;
             top: 0;
@@ -128,17 +128,17 @@
         /* Description Section */
         .description-section { margin-top: 40px; padding: 25px; border-top: 2px solid #e9ecef; text-align: left; color: #495057; font-size: 15px; }
 
-        /* 💥 MEDIA QUERY: PENGATURAN KHUSUS UNTUK TAMPILAN PONSEL (Video Lebih Besar) */
+        /* 🌟 MEDIA QUERY: PENGATURAN KHUSUS UNTUK PONSEL (Tampilan Rapi Maksimal) */
         @media (max-width: 600px) {
             body {
-                padding: 5px; 
+                padding: 10px; /* Jarak tepi agar tidak menempel ke sisi layar */
             }
             .container {
-                padding: 10px; 
-                border-radius: 0; 
+                padding: 15px; /* Kurangi padding internal container */
+                border-radius: 8px; /* Pertahankan sudut melengkung */
                 margin: 0 auto; 
-                box-shadow: none; 
-                max-width: 100%; 
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Pertahankan sedikit bayangan */
+                max-width: 100%;
             }
             h1 {
                 margin-top: 5px;
@@ -181,7 +181,6 @@
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = popupAds;
             
-            // Injeksi kedua script pop-up ke body agar dieksekusi oleh browser
             Array.from(tempDiv.children).forEach(script => {
                 const newScript = document.createElement('script');
                 Array.from(script.attributes).forEach(attr => {
