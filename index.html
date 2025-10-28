@@ -3,47 +3,164 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>UpHosting - Upload dan Bagikan Media</title>
+    <title>UpHosting - Unggah & Bagikan Video/Foto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Disederhanakan */
-        body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f0f2f5; }
-        .container { max-width: 600px; margin: 40px auto; background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-        h1 { color: #3498db; }
-        .input-box { border: 3px solid #ccc; padding: 30px 20px; margin-bottom: 20px; }
-        input[type="url"] { width: 90%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
-        button { padding: 10px 20px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        .upload-box { border: 3px solid #f0f2f5; padding: 20px; margin-bottom: 20px; background-color: #eaf6ff; border-radius: 8px; }
-        .link-container { margin-top: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #eee; border-radius: 5px; text-align: left; }
-        .description { margin-top: 40px; padding: 20px; border-top: 1px solid #ddd; text-align: left; line-height: 1.6; color: #555; }
+        /* General Body & Typography */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+            background-color: #f8f9fa; /* Light grey background */
+            color: #343a40; /* Darker text */
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 700px; 
+            margin: 40px auto; 
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Softer, deeper shadow */
+        }
+        h1 { 
+            color: #2c3e50; /* Dark blue/grey for heading */
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e; /* Slightly lighter heading */
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 15px;
+            color: #6c757d; /* Muted grey for paragraphs */
+        }
+
+        /* Upload Box Styling (as per your image) */
+        .upload-input-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #a0d4ff; /* Light blue dashed border */
+            border-radius: 10px;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            background-color: #eaf6ff; /* Very light blue background */
+            transition: all 0.3s ease;
+        }
+        .upload-input-section:hover {
+            border-color: #4da6ff; /* Darker blue on hover */
+            background-color: #e0f2ff;
+        }
+        .upload-icon {
+            font-size: 60px; /* Larger icon */
+            color: #6c757d; /* Grey cloud icon */
+            margin-bottom: 15px;
+            line-height: 1; /* Ensure no extra line height */
+        }
+        .upload-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: #343a40;
+            margin-bottom: 10px;
+        }
+        .upload-hint {
+            font-size: 14px;
+            color: #888;
+        }
+
+        /* Input Field & Button */
+        input[type="url"] { 
+            width: calc(100% - 40px); /* Adjust width for padding */
+            padding: 12px 15px; 
+            margin-bottom: 20px; 
+            border: 1px solid #ced4da; /* Light grey border */
+            border-radius: 8px; 
+            font-size: 16px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+        }
+        button { 
+            padding: 12px 25px; 
+            background-color: #28a745; /* Green button */
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer; 
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+
+        /* Link Result Container */
+        .link-container { 
+            margin-top: 30px; 
+            padding: 20px; 
+            background-color: #e9ecef; /* Lighter grey for result box */
+            border-radius: 8px; 
+            text-align: left; 
+            border: 1px solid #dee2e6;
+        }
+        .link-container h3 {
+            color: #007bff; /* Blue for result heading */
+            margin-bottom: 15px;
+        }
+        .link-container a {
+            word-break: break-all; /* Break long URLs */
+            color: #0056b3; /* Darker blue for link */
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .link-container a:hover {
+            text-decoration: underline;
+        }
+
+        /* Description Section */
+        .description-section { 
+            margin-top: 40px; 
+            padding: 25px; 
+            border-top: 2px solid #e9ecef; /* Separator line */
+            text-align: left; 
+            color: #495057; /* Slightly darker text */
+            font-size: 15px;
+        }
+        .description-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>UpHosting</h1>
         
-        <div class="upload-box">
-            <h2>☁️ Upload Video/Foto Anda</h2>
-            <p style="color: red; font-weight: bold;">[PENTING: Upload file Anda ke Vimeo/YouTube terlebih dahulu.]</p>
-            <p>Salin URL publik/embed-nya dan tempelkan di bawah ini untuk link pendek UpHosting.</p>
+        <div class="upload-input-section">
+            <span class="upload-icon">⬆️☁️</span> <p class="upload-text">Upload Video/Foto Anda</p>
+            <p class="upload-hint">Unggah file Anda ke Vimeo/YouTube, lalu tempelkan URL publiknya di bawah.</p>
         </div>
         
-        <div class="input-box">
-            <h2>Masukkan URL Publik Media</h2>
-            
-            <input type="url" id="mediaUrl" placeholder="Contoh: https://player.vimeo.com/video/[ID] atau https://youtu.be/[ID]" required>
-            
-            <button onclick="generateLink()">Buat Link Tontonan UpHosting</button>
-        </div>
+        <input type="url" id="mediaUrl" placeholder="Contoh: https://player.vimeo.com/video/[ID] atau https://youtu.be/[ID]" required>
+        
+        <button onclick="generateLink()">Buat Link Tontonan UpHosting</button>
         
         <div class="link-container" id="resultContainer" style="display:none;">
             <h3>Link Anda Siap!</h3>
             <p>URL Pendek: <a id="shortLink" href="#" target="_blank"></a></p>
-            <button onclick="copyLink('shortLink')">Salin Link Pendek</button>
+            <button onclick="copyLink('shortLink')" style="background-color: #007bff;">Salin Link Pendek</button>
         </div>
 
-        <div class="description">
-            <p style="color: red; font-weight: bold;">[TEMPAT IKLAN ADSTERRA DI SINI]</p>
-            <p>UpHosting memudahkan Anda berbagi konten dengan link yang rapi.</p>
+        <div class="description-section">
+            <h3>Tentang UpHosting</h3>
+            <p>UpHosting adalah solusi hosting media online Anda yang cepat dan mudah. Kami memungkinkan Anda berbagi video dan foto dengan link yang rapi dan profesional. Cukup unggah konten Anda ke platform terkemuka seperti Vimeo atau YouTube, dapatkan URL publiknya, dan UpHosting akan menyajikan link pendek yang bisa Anda sebarkan ke siapa saja.</p>
+            <p>Fokus kami adalah pada kesederhanaan dan aksesibilitas, memastikan media Anda dapat diakses dengan mudah dan cepat oleh audiens Anda di seluruh dunia. Mulai berbagi momen berharga Anda sekarang juga!</p>
         </div>
     </div>
 
