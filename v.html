@@ -140,7 +140,7 @@
         
         <div class="description-section">
             <h3>Tentang UpHosting</h3>
-            <p>Jika video lambat dimuat, coba klik tombol play di thumbnail. Pastikan link eksternal yang dimasukkan adalah link EMBED, seperti format Google Drive /preview.</p>
+            <p>Jika video lambat dimuat, coba klik tombol play di thumbnail. Pastikan link Google Drive sudah disetel ke "Siapa saja yang memiliki link".</p>
         </div>
     </div>
 
@@ -231,6 +231,7 @@
                 const isYouTube = mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be');
                 const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(mediaUrl);
                 const isDirectVideo = /\.(mp4|mov|webm)$/i.test(mediaUrl);
+                const isGoogleDrive = mediaUrl.includes('drive.google.com/file/d/') && mediaUrl.includes('/preview'); // NEW: Deteksi Google Drive
                 const isPortraitMode = mediaUrl.toLowerCase().includes('ratio=portrait') || mediaUrl.toLowerCase().includes('rasio=portrait');
                 
                 
@@ -239,6 +240,12 @@
 
                 } else if (isVimeo) {
                     loadUniversalIframe(mediaUrl, isPortraitMode, 'Memuat pemutar Vimeo...');
+
+                } else if (isGoogleDrive) { 
+                    // 🌟 KHUSUS GOOGLE DRIVE: Gunakan URL persis, JANGAN ditambahkan ?autoplay=1 (agar tidak konflik)
+                    const iframeContent = `<iframe src="${mediaUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
+                    delayAndDisplay(iframeContent, isPortraitMode);
+                    statusElement.textContent = 'Memuat video Google Drive...';
 
                 } else if (isDirectVideo) {
                     const mediaContent = `<video controls autoplay><source src="${mediaUrl}"></video>`;
@@ -251,7 +258,7 @@
                     statusElement.textContent = 'Foto dimuat.';
 
                 } else {
-                    // FALLBACK: Mencoba memuat link sebagai IFRAME Universal (ideal untuk Google Drive /preview)
+                    // FALLBACK: Mencoba memuat link sebagai IFRAME Universal
                     loadUniversalIframe(mediaUrl, isPortraitMode);
                 }
 
