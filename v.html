@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Menonton di UpHosting</title>
     
+    <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
+    <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -13,18 +16,18 @@
         body { 
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
-            padding: 20px; /* REVERTED: Padding body kembali normal */
+            padding: 20px; 
             background-color: #f8f9fa; 
             color: #343a40; 
             line-height: 1.6;
         }
         .container { 
-            max-width: 800px; /* REVERTED: Maksimal lebar 800px (tampilan kotak rapi) */
-            margin: 20px auto; /* REVERTED: Kembali ke tengah */
+            max-width: 950px; /* 🌟 PERUBAHAN: Lebar kontainer utama diperbesar (950px) */
+            margin: 20px auto; 
             background-color: white; 
-            padding: 30px; /* REVERTED: Padding kontainer kembali normal */
+            padding: 30px; 
             border-radius: 12px; 
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Reverted */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); 
         }
         h1 { color: #2c3e50; font-weight: 700; margin-bottom: 20px; }
         #status { color: #007bff; font-weight: 600; margin-bottom: 20px; }
@@ -58,6 +61,8 @@
             margin: 0 auto; 
         }
 
+        /* Watermark Logo - DIHAPUS */
+
         /* Thumbnail YouTube dan Tombol Play */
         .youtube-thumb-wrapper {
             position: relative;
@@ -66,6 +71,9 @@
             height: 100%;
         }
         .youtube-thumb-wrapper img {
+            width: 100%; 
+            height: 100%;
+            object-fit: cover; 
             opacity: 0.8;
             transition: opacity 0.3s;
         }
@@ -77,11 +85,19 @@
             top: 55%; 
             left: 50%; 
             transform: translate(-50%, -50%); 
+            
             width: 90px;
             height: 60px;
             background: rgba(255, 0, 0, 0.8);
             border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 10;
+            transition: background 0.3s;
+        }
+        .play-button:hover {
+            background: red;
         }
         .play-button::before {
             content: '▶️';
@@ -103,6 +119,7 @@
             justify-content: center;
             color: white; 
             font-size: 1.2em;
+            font-weight: 600;
         }
         .loading-screen::after {
             content: '⏳'; 
@@ -130,7 +147,7 @@
         
         <div class="description-section">
             <h3>Tentang UpHosting</h3>
-            <p>Jika video lambat dimuat, coba klik tombol play. Pastikan link Google Drive sudah diatur "Siapa saja yang memiliki link".</p>
+            <p>Jika video lambat dimuat, coba klik tombol play di thumbnail. Pastikan link Google Drive sudah disetel ke "Siapa saja yang memiliki link".</p>
         </div>
     </div>
 
@@ -139,29 +156,7 @@
         const encodedUrl = urlParams.get('id');
         const statusElement = document.getElementById('status');
         const mediaDisplay = document.getElementById('mediaDisplay');
-
-        // 🌟 HANYA KODE POP-UP PERTAMA YANG KITA INJEKSI SAAT KLIK
-        const popupAds = `
-            <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
-        `;
-
-        function injectPopupAds() {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = popupAds;
-            
-            // Injeksi kode pop-up ke body agar dipicu
-            Array.from(tempDiv.children).forEach(script => {
-                const newScript = document.createElement('script');
-                Array.from(script.attributes).forEach(attr => {
-                    newScript.setAttribute(attr.name, attr.value);
-                });
-                if (script.innerHTML) {
-                    newScript.innerHTML = script.innerHTML;
-                }
-                document.body.appendChild(newScript);
-            });
-        }
-
+        // const logoPath = 'Gemini_Generated_Image_6hni9t6hni9t6hni.jpg'; // DIHAPUS
 
         function wrapMedia(content, isPortrait = false) {
             const portraitClass = isPortrait ? ' is-portrait' : '';
@@ -179,6 +174,7 @@
             setTimeout(() => {
                 mediaDisplay.innerHTML = wrapMedia(content, isPortraitMode);
                 statusElement.textContent = 'Video siap diputar.';
+
             }, 2000); 
         }
         
@@ -194,9 +190,6 @@
 
              const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
              
-             // 🌟 PICU POP-UP SAAT VIDEO MULAI DIMUAT (untuk Drive/Vimeo)
-             injectPopupAds(); 
-
              delayAndDisplay(iframeContent, isPortraitMode);
              statusElement.textContent = statusText || 'Memuat konten eksternal...';
         }
@@ -231,9 +224,6 @@
             statusElement.textContent = 'Klik tombol Play untuk memuat video YouTube.';
 
             thumbnailElement.addEventListener('click', () => {
-                // 🌟 PICU POP-UP SAAT TOMBOL PLAY DI YOUTUBE DIKLIK
-                injectPopupAds(); 
-
                 const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                 
                 delayAndDisplay(iframeContent, isPortraitMode);
@@ -257,6 +247,24 @@
                 
                 if (isYouTube) {
                     loadYouTubeVideo(mediaUrl, isPortraitMode);
+
+                } else if (isVimeo) {
+                    loadUniversalIframe(mediaUrl, isPortraitMode, 'Memuat pemutar Vimeo...');
+
+                } else if (isGoogleDrive) { 
+                    const iframeContent = `<iframe src="${mediaUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                    delayAndDisplay(iframeContent, isPortraitMode);
+                    statusElement.textContent = 'Memuat video Google Drive...';
+
+                } else if (isDirectVideo) {
+                    const mediaContent = `<video controls autoplay><source src="${mediaUrl}"></video>`;
+                    delayAndDisplay(mediaContent, isPortraitMode);
+                    statusElement.textContent = 'Memuat video langsung...';
+
+                } else if (isImage) {
+                    const mediaContent = `<img src="${mediaUrl}" alt="Media UpHosting">`;
+                    mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode); 
+                    statusElement.textContent = 'Foto dimuat.';
 
                 } else {
                     loadUniversalIframe(mediaUrl, isPortraitMode);
