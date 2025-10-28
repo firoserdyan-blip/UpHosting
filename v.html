@@ -178,6 +178,7 @@
                  embedUrl += '?autoplay=1';
              }
 
+             // MEMASTIKAN allow="fullscreen" DAN allowfullscreen
              const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
              
              delayAndDisplay(iframeContent, isPortraitMode);
@@ -231,7 +232,7 @@
                 const isYouTube = mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be');
                 const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(mediaUrl);
                 const isDirectVideo = /\.(mp4|mov|webm)$/i.test(mediaUrl);
-                const isGoogleDrive = mediaUrl.includes('drive.google.com/file/d/') && mediaUrl.includes('/preview'); // NEW: Deteksi Google Drive
+                const isGoogleDrive = mediaUrl.includes('drive.google.com/file/d/') && mediaUrl.includes('/preview'); // Deteksi Google Drive
                 const isPortraitMode = mediaUrl.toLowerCase().includes('ratio=portrait') || mediaUrl.toLowerCase().includes('rasio=portrait');
                 
                 
@@ -242,8 +243,9 @@
                     loadUniversalIframe(mediaUrl, isPortraitMode, 'Memuat pemutar Vimeo...');
 
                 } else if (isGoogleDrive) { 
-                    // 🌟 KHUSUS GOOGLE DRIVE: Gunakan URL persis, JANGAN ditambahkan ?autoplay=1 (agar tidak konflik)
-                    const iframeContent = `<iframe src="${mediaUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
+                    // KHUSUS GOOGLE DRIVE: JANGAN tambahkan parameter.
+                    // 🌟 FIX FULL SCREEN DI SINI
+                    const iframeContent = `<iframe src="${mediaUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
                     delayAndDisplay(iframeContent, isPortraitMode);
                     statusElement.textContent = 'Memuat video Google Drive...';
 
