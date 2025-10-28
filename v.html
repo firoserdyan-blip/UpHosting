@@ -75,9 +75,9 @@
             opacity: 1;
         }
         .play-button {
-            /* 🌟 PERBAIKAN: Menurunkan posisi tombol play */
+            /* POSISI TOMBOL PLAY FINAL: 55% */
             position: absolute; 
-            top: 60%; /* Diubah dari 50% menjadi 60% */
+            top: 55%; 
             left: 50%; 
             transform: translate(-50%, -50%); 
             
@@ -101,7 +101,7 @@
             padding-left: 5px; 
         }
 
-        /* Loading Screen */
+        /* Loading Screen (Jeda 2 Detik) */
         .loading-screen {
             position: absolute;
             top: 0;
@@ -117,7 +117,7 @@
             font-weight: 600;
         }
         .loading-screen::after {
-            content: '⏳'; 
+            content: '⏳'; /* Ikon loading */
             animation: pulse 1s infinite alternate;
         }
         @keyframes pulse {
@@ -140,7 +140,7 @@
         
         <div class="description-section">
             <h3>Tentang UpHosting</h3>
-            <p>Jika video lambat dimuat, coba klik tombol play di thumbnail. UpHosting menggunakan link pihak ketiga untuk memuat media Anda.</p>
+            <p>Jika video lambat dimuat, coba klik tombol play di thumbnail. Pastikan link eksternal yang dimasukkan adalah link EMBED, seperti format Google Drive /preview.</p>
         </div>
     </div>
 
@@ -158,22 +158,18 @@
         function delayAndDisplay(content, isPortraitMode) {
             statusElement.textContent = 'Memuat konten (2 detik)...'; 
             
-            // 1. Tampilkan layar hitam loading
             const loadingScreenContent = `<div class="loading-screen"></div>`;
             mediaDisplay.innerHTML = wrapMedia(loadingScreenContent, isPortraitMode);
 
-            // 2. Tunda selama 2 detik
             setTimeout(() => {
-                // 3. Setelah 2 detik, masukkan konten video/iframe yang sebenarnya
                 mediaDisplay.innerHTML = wrapMedia(content, isPortraitMode);
                 statusElement.textContent = 'Video siap diputar.';
             }, 2000); 
         }
         
-        // 🌟 FUNGSI PERBAIKAN: Fungsi untuk memuat Iframe Universal dengan Autoplay
         function loadUniversalIframe(url, isPortraitMode, statusText) {
-             // 1. Coba tambahkan parameter autoplay ke URL jika belum ada
              let embedUrl = url;
+             // Coba tambahkan parameter autoplay jika URL belum memilikinya
              if (url.includes('?')) {
                  if (!url.includes('autoplay')) {
                      embedUrl += '&autoplay=1';
@@ -182,10 +178,8 @@
                  embedUrl += '?autoplay=1';
              }
 
-             // 2. Buat iframe
              const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
              
-             // 3. Panggil delayAndDisplay
              delayAndDisplay(iframeContent, isPortraitMode);
              statusElement.textContent = statusText || 'Memuat konten eksternal...';
         }
@@ -193,7 +187,6 @@
         function loadYouTubeVideo(mediaUrl, isPortraitMode) {
             const videoIdMatch = mediaUrl.match(/(?:v=|\/embed\/|youtu\.be\/|\/v\/|\/e\/|watch\?v=|&v=)([a-zA-Z0-9_-]{11})/);
             if (!videoIdMatch) {
-                // Jika ID tidak ditemukan, fallback ke pemuatan iframe universal
                 loadUniversalIframe(mediaUrl, isPortraitMode, "Link YouTube tidak valid. Mencoba memuat langsung...");
                 return;
             }
@@ -202,7 +195,6 @@
             const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
             const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
 
-            // Membuat elemen thumbnail dan tombol play
             const thumbnailElement = document.createElement('div');
             thumbnailElement.className = 'youtube-thumb-wrapper';
             
@@ -224,7 +216,6 @@
             thumbnailElement.addEventListener('click', () => {
                 const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                 
-                // Panggil delayAndDisplay untuk jeda 2 detik
                 delayAndDisplay(iframeContent, isPortraitMode);
 
             }, { once: true }); 
@@ -247,23 +238,20 @@
                     loadYouTubeVideo(mediaUrl, isPortraitMode);
 
                 } else if (isVimeo) {
-                    // Vimeo dimuat langsung dan ditunda 2 detik
                     loadUniversalIframe(mediaUrl, isPortraitMode, 'Memuat pemutar Vimeo...');
 
                 } else if (isDirectVideo) {
-                    // File Video Langsung
                     const mediaContent = `<video controls autoplay><source src="${mediaUrl}"></video>`;
                     delayAndDisplay(mediaContent, isPortraitMode);
                     statusElement.textContent = 'Memuat video langsung...';
 
                 } else if (isImage) {
-                    // Gambar dimuat instan
                     const mediaContent = `<img src="${mediaUrl}" alt="Media UpHosting">`;
                     mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode); 
                     statusElement.textContent = 'Foto dimuat.';
 
                 } else {
-                    // 🌟 FALLBACK: Mencoba memuat link sebagai IFRAME Universal dengan Autoplay
+                    // FALLBACK: Mencoba memuat link sebagai IFRAME Universal (ideal untuk Google Drive /preview)
                     loadUniversalIframe(mediaUrl, isPortraitMode);
                 }
 
