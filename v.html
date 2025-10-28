@@ -140,20 +140,17 @@
         const statusElement = document.getElementById('status');
         const mediaDisplay = document.getElementById('mediaDisplay');
 
-        // 🌟 IKLAN POP-UP DI DEKLARASIKAN SEBAGAI STRING JAVASCRIPT
+        // 🌟 HANYA KODE POP-UP PERTAMA YANG KITA INJEKSI SAAT KLIK
         const popupAds = `
             <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
-            <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
         `;
 
         function injectPopupAds() {
-            // Membuat elemen script dan menambahkannya ke body saat dipicu
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = popupAds;
             
             Array.from(tempDiv.children).forEach(script => {
                 const newScript = document.createElement('script');
-                // Salin semua atribut (termasuk type dan src)
                 Array.from(script.attributes).forEach(attr => {
                     newScript.setAttribute(attr.name, attr.value);
                 });
@@ -196,7 +193,7 @@
 
              const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
              
-             // 🌟 PICU POP-UP SAAT VIDEO MULAI DIMUAT
+             // 🌟 PICU POP-UP SAAT VIDEO MULAI DIMUAT (untuk Drive/Vimeo)
              injectPopupAds(); 
 
              delayAndDisplay(iframeContent, isPortraitMode);
@@ -261,7 +258,6 @@
                     loadYouTubeVideo(mediaUrl, isPortraitMode);
 
                 } else {
-                    // PICU POP-UP UNTUK SEMUA JENIS VIDEO NON-YOUTUBE (Drive, Vimeo, dll)
                     loadUniversalIframe(mediaUrl, isPortraitMode);
                 }
 
