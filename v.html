@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Menonton di UpHosting</title>
     
-    <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
-    <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -15,16 +13,16 @@
         body { 
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
-            padding: 5px; /* Padding dikurangi */
+            padding: 5px; 
             background-color: #f8f9fa; 
             color: #343a40; 
             line-height: 1.6;
         }
         .container { 
-            max-width: 98%; /* 🌟 LAYAR DIPERBESAR HAMPIR PENUH */
+            max-width: 98%; /* LAYAR DIPERBESAR HAMPIR PENUH */
             margin: 5px auto; 
             background-color: white; 
-            padding: 15px; /* Padding kontainer dikurangi */
+            padding: 15px; 
             border-radius: 10px; 
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
         }
@@ -142,6 +140,31 @@
         const statusElement = document.getElementById('status');
         const mediaDisplay = document.getElementById('mediaDisplay');
 
+        // 🌟 IKLAN POP-UP DI DEKLARASIKAN SEBAGAI STRING JAVASCRIPT
+        const popupAds = `
+            <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
+            <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
+        `;
+
+        function injectPopupAds() {
+            // Membuat elemen script dan menambahkannya ke body saat dipicu
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = popupAds;
+            
+            Array.from(tempDiv.children).forEach(script => {
+                const newScript = document.createElement('script');
+                // Salin semua atribut (termasuk type dan src)
+                Array.from(script.attributes).forEach(attr => {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                if (script.innerHTML) {
+                    newScript.innerHTML = script.innerHTML;
+                }
+                document.body.appendChild(newScript);
+            });
+        }
+
+
         function wrapMedia(content, isPortrait = false) {
             const portraitClass = isPortrait ? ' is-portrait' : '';
             return `<div class="media-responsive${portraitClass}">
@@ -173,6 +196,9 @@
 
              const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
              
+             // 🌟 PICU POP-UP SAAT VIDEO MULAI DIMUAT
+             injectPopupAds(); 
+
              delayAndDisplay(iframeContent, isPortraitMode);
              statusElement.textContent = statusText || 'Memuat konten eksternal...';
         }
@@ -207,6 +233,9 @@
             statusElement.textContent = 'Klik tombol Play untuk memuat video YouTube.';
 
             thumbnailElement.addEventListener('click', () => {
+                // 🌟 PICU POP-UP SAAT TOMBOL PLAY DI YOUTUBE DIKLIK
+                injectPopupAds(); 
+
                 const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                 
                 delayAndDisplay(iframeContent, isPortraitMode);
@@ -231,24 +260,8 @@
                 if (isYouTube) {
                     loadYouTubeVideo(mediaUrl, isPortraitMode);
 
-                } else if (isVimeo) {
-                    loadUniversalIframe(mediaUrl, isPortraitMode, 'Memuat pemutar Vimeo...');
-
-                } else if (isGoogleDrive) { 
-                    const iframeContent = `<iframe src="${mediaUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-                    delayAndDisplay(iframeContent, isPortraitMode);
-                    statusElement.textContent = 'Memuat video Google Drive...';
-
-                } else if (isDirectVideo) {
-                    const mediaContent = `<video controls autoplay><source src="${mediaUrl}"></video>`;
-                    delayAndDisplay(mediaContent, isPortraitMode);
-                    statusElement.textContent = 'Memuat video langsung...';
-
-                } else if (isImage) {
-                    const mediaContent = `<img src="${mediaUrl}" alt="Media UpHosting">`;
-                    mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode); 
-                    statusElement.textContent = 'Foto dimuat.';
                 } else {
+                    // PICU POP-UP UNTUK SEMUA JENIS VIDEO NON-YOUTUBE (Drive, Vimeo, dll)
                     loadUniversalIframe(mediaUrl, isPortraitMode);
                 }
 
