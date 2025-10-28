@@ -30,16 +30,16 @@
         
         /* Media Container */
         .media-container { margin-top: 20px; border-radius: 8px; overflow: hidden; }
-        #mediaDisplay { width: 100%; background-color: #000; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
         
         /* Container Responsif */
         .media-responsive {
             position: relative;
-            padding-bottom: 56.25%; 
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
             height: 0;
             overflow: hidden;
             max-width: 100%;
             border-radius: 8px;
+            background-color: black; /* Default background */
         }
         .media-responsive iframe, 
         .media-responsive video, 
@@ -49,11 +49,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            /* 🌟 PERBAIKAN: Gunakan cover untuk iframe/video/thumb agar mengisi penuh */
+            object-fit: cover; 
         }
-        .media-responsive.is-portrait { padding-bottom: 177.77%; max-width: 400px; margin: 0 auto; }
+        .media-responsive.is-portrait { 
+            padding-bottom: 177.77%; 
+            max-width: 400px; 
+            margin: 0 auto; 
+        }
 
-        /* 🌟 CSS BARU untuk Thumbnail YouTube dan Tombol Play */
+        /* 🌟 Perbaikan Kritis: Thumbnail YouTube dan Tombol Play */
         .youtube-thumb-wrapper {
             position: relative;
             cursor: pointer;
@@ -62,10 +67,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: black; /* Warna default jika thumbnail gagal dimuat */
         }
+        /* 🌟 PERBAIKAN: Pastikan gambar thumbnail mengisi wrapper */
         .youtube-thumb-wrapper img {
-            object-fit: cover;
+            width: 100%; 
+            height: 100%;
+            object-fit: cover; /* Penting! */
             opacity: 0.8;
             transition: opacity 0.3s;
         }
@@ -91,7 +98,7 @@
             content: '▶️';
             font-size: 30px;
             color: white;
-            padding-left: 5px; /* Sedikit geser ke kanan agar terlihat di tengah */
+            padding-left: 5px; 
         }
 
         /* Description Section */
@@ -133,32 +140,27 @@
             }
             const videoId = videoIdMatch[1];
             
-            // Menggunakan link thumbnail langsung (resolusi tinggi)
             const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
             const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
 
             const thumbnailElement = document.createElement('div');
             thumbnailElement.className = 'youtube-thumb-wrapper';
             
-            // Tambahkan gambar thumbnail
             const imgElement = document.createElement('img');
             imgElement.src = thumbnailUrl;
             imgElement.alt = "YouTube Thumbnail";
             thumbnailElement.appendChild(imgElement);
 
-            // Tambahkan tombol play sederhana
             const playButton = document.createElement('div');
             playButton.className = 'play-button';
             thumbnailElement.appendChild(playButton);
             
-            // Bungkus thumbnail dengan wrapper responsif
             mediaDisplay.innerHTML = wrapMedia('', isPortraitMode);
             const wrapper = mediaDisplay.querySelector('.media-responsive');
             wrapper.appendChild(thumbnailElement);
             
             statusElement.textContent = 'Klik tombol Play untuk memuat video YouTube.';
 
-            // Pasang event listener pada wrapper thumbnail/tombol
             thumbnailElement.addEventListener('click', () => {
                 const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                 wrapper.innerHTML = iframeContent;
@@ -180,24 +182,20 @@
                 
                 
                 if (isYouTube) {
-                    // Gunakan fungsi lazy load YouTube baru (dengan thumbnail dan tombol HTML)
                     loadYouTubeVideo(mediaUrl, isPortraitMode);
 
                 } else if (isVimeo) {
-                    // Vimeo dimuat langsung
                     const embedUrl = mediaUrl.includes('?') ? mediaUrl + '&autoplay=1' : mediaUrl + '?autoplay=1';
                     const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                     mediaDisplay.innerHTML = wrapMedia(iframeContent, isPortraitMode);
                     statusElement.textContent = 'Memuat pemutar Vimeo...';
 
                 } else if (isDirectVideo) {
-                    // File Video Langsung
                     const mediaContent = `<video controls autoplay><source src="${mediaUrl}"></video>`;
                     mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode);
                     statusElement.textContent = 'Video dimuat.';
 
                 } else if (isImage) {
-                    // Gambar
                     const mediaContent = `<img src="${mediaUrl}" alt="Media UpHosting">`;
                     mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode); 
                     statusElement.textContent = 'Foto dimuat.';
