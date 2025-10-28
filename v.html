@@ -5,26 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Menonton di UpHosting</title>
     
-    <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
-    <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Utama */
+        /* CSS Utama (Berlaku untuk PC/Desktop) */
         body { 
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
-            padding: 20px; /* Padding default untuk PC */
-            background-color: #f8f9fa; 
+            padding: 20px; 
+            background-color: #f8f9fa; /* Latar belakang abu-abu muda */
             color: #343a40; 
             line-height: 1.6;
         }
         .container { 
-            max-width: 1050px; /* Lebar maksimal untuk PC */
+            max-width: 1050px; /* Lebar maksimal besar untuk PC */
             margin: 20px auto; 
-            background-color: white; 
+            background-color: white; /* Kontainer berwarna putih */
             padding: 30px; 
             border-radius: 12px; 
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); 
@@ -35,7 +32,7 @@
         /* Media Container */
         .media-container { margin-top: 20px; border-radius: 8px; overflow: hidden; }
         
-        /* Container Responsif */
+        /* Container Responsif (Membuat video menyesuaikan 16:9) */
         .media-responsive {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
@@ -104,7 +101,7 @@
             padding-left: 5px; 
         }
 
-        /* Loading Screen (Jeda 2 Detik) */
+        /* Loading Screen */
         .loading-screen {
             position: absolute;
             top: 0;
@@ -131,17 +128,17 @@
         /* Description Section */
         .description-section { margin-top: 40px; padding: 25px; border-top: 2px solid #e9ecef; text-align: left; color: #495057; font-size: 15px; }
 
-        /* 💥 MEDIA QUERY: PENGATURAN KHUSUS UNTUK TAMPILAN PONSEL (Video Lebih Besar) */
+        /* 🌟 MEDIA QUERY: PENGATURAN KHUSUS UNTUK PONSEL (Tampilan Rapi Maksimal) */
         @media (max-width: 600px) {
             body {
-                padding: 5px; /* Kurangi padding body di ponsel */
+                padding: 10px; 
             }
             .container {
-                padding: 10px; /* Kurangi padding container di ponsel */
-                border-radius: 0; /* Hilangkan border radius untuk tampilan lebih edge-to-edge */
-                margin: 0 auto; /* Hilangkan margin atas/bawah */
-                box-shadow: none; /* Hilangkan bayangan untuk kesan lebih native */
-                max-width: 100%; /* Pastikan mengambil lebar penuh */
+                padding: 15px; 
+                border-radius: 8px; 
+                margin: 0 auto; 
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
+                max-width: 100%;
             }
             h1 {
                 margin-top: 5px;
@@ -157,6 +154,7 @@
         
         <script async="async" data-cfasync="false" src="//carvedseptembernest.com/bd05c5b36833b9ca35a0cf635cfc4c78/invoke.js"></script>
         <div id="container-bd05c5b36833b9ca35a0cf635cfc4c78"></div>
+        
         <div class="media-container">
             <p id="status">Memuat konten...</p>
             <div id="mediaDisplay"></div>
@@ -173,6 +171,35 @@
         const encodedUrl = urlParams.get('id');
         const statusElement = document.getElementById('status');
         const mediaDisplay = document.getElementById('mediaDisplay');
+        
+        // 🌟 KODE POP-UP DARI ADSTERRA (1 & 2) DISIMPAN DI VARIABEL
+        const popupAds = `
+            <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
+            <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
+        `;
+
+        let popupInjected = false;
+
+        function injectPopupAds() {
+            if (popupInjected) return; // Pastikan hanya dipicu sekali
+
+            // Injeksi kedua script pop-up ke body agar dieksekusi oleh browser
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = popupAds;
+            
+            Array.from(tempDiv.children).forEach(script => {
+                const newScript = document.createElement('script');
+                Array.from(script.attributes).forEach(attr => {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                if (script.innerHTML) {
+                    newScript.innerHTML = script.innerHTML;
+                }
+                document.body.appendChild(newScript);
+            });
+            popupInjected = true;
+        }
+
 
         function wrapMedia(content, isPortrait = false) {
             const portraitClass = isPortrait ? ' is-portrait' : '';
@@ -206,6 +233,9 @@
 
              const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
              
+             // 💥 PICU POP-UP SAAT VIDEO NON-YOUTUBE (Drive/Vimeo) MULAI DIMUAT
+             injectPopupAds(); 
+
              delayAndDisplay(iframeContent, isPortraitMode);
              statusElement.textContent = statusText || 'Memuat konten eksternal...';
         }
@@ -240,6 +270,9 @@
             statusElement.textContent = 'Klik tombol Play untuk memuat video YouTube.';
 
             thumbnailElement.addEventListener('click', () => {
+                // 💥 PICU POP-UP SAAT TOMBOL PLAY DI YOUTUBE DIKLIK
+                injectPopupAds(); 
+
                 const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                 
                 delayAndDisplay(iframeContent, isPortraitMode);
