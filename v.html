@@ -63,7 +63,6 @@
             cursor: pointer;
             width: 100%;
             height: 100%;
-            /* ❌ Flexbox dihapus karena tidak akurat */
         }
         .youtube-thumb-wrapper img {
             width: 100%; 
@@ -76,11 +75,11 @@
             opacity: 1;
         }
         .play-button {
-            /* 🌟 PERBAIKAN KRITIS: Menengahkan tombol secara universal */
+            /* 🌟 PERBAIKAN: Menurunkan posisi tombol play */
             position: absolute; 
-            top: 50%; /* Pindah 50% dari atas */
-            left: 50%; /* Pindah 50% dari kiri */
-            transform: translate(-50%, -50%); /* Geser ke kiri-atas sebesar setengah ukuran tombol */
+            top: 60%; /* Diubah dari 50% menjadi 60% */
+            left: 50%; 
+            transform: translate(-50%, -50%); 
             
             width: 90px;
             height: 60px;
@@ -117,9 +116,8 @@
             font-size: 1.2em;
             font-weight: 600;
         }
-        /* 🌟 PERBAIKAN: Hilangkan teks iklan, hanya biarkan loading icon (Opsional) */
         .loading-screen::after {
-            content: '⏳'; /* Bisa diganti dengan ikon atau teks lain */
+            content: '⏳'; 
             animation: pulse 1s infinite alternate;
         }
         @keyframes pulse {
@@ -158,9 +156,9 @@
         }
         
         function delayAndDisplay(content, isPortraitMode) {
-            statusElement.textContent = 'Memuat konten (2 detik)...'; // Status bar tetap ada
+            statusElement.textContent = 'Memuat konten (2 detik)...'; 
             
-            // 1. Tampilkan layar hitam loading (tanpa teks "Iklan")
+            // 1. Tampilkan layar hitam loading
             const loadingScreenContent = `<div class="loading-screen"></div>`;
             mediaDisplay.innerHTML = wrapMedia(loadingScreenContent, isPortraitMode);
 
@@ -172,6 +170,25 @@
             }, 2000); 
         }
         
+        // 🌟 FUNGSI PERBAIKAN: Fungsi untuk memuat Iframe Universal dengan Autoplay
+        function loadUniversalIframe(url, isPortraitMode, statusText) {
+             // 1. Coba tambahkan parameter autoplay ke URL jika belum ada
+             let embedUrl = url;
+             if (url.includes('?')) {
+                 if (!url.includes('autoplay')) {
+                     embedUrl += '&autoplay=1';
+                 }
+             } else {
+                 embedUrl += '?autoplay=1';
+             }
+
+             // 2. Buat iframe
+             const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>`;
+             
+             // 3. Panggil delayAndDisplay
+             delayAndDisplay(iframeContent, isPortraitMode);
+             statusElement.textContent = statusText || 'Memuat konten eksternal...';
+        }
 
         function loadYouTubeVideo(mediaUrl, isPortraitMode) {
             const videoIdMatch = mediaUrl.match(/(?:v=|\/embed\/|youtu\.be\/|\/v\/|\/e\/|watch\?v=|&v=)([a-zA-Z0-9_-]{11})/);
@@ -212,13 +229,6 @@
 
             }, { once: true }); 
         }
-
-        // 🌟 FUNGSI BARU: Mendukung IFRAME Universal
-        function loadUniversalIframe(url, isPortraitMode, statusText) {
-             const iframeContent = `<iframe src="${url}" frameborder="0" allow="fullscreen" allowfullscreen></iframe>`;
-             delayAndDisplay(iframeContent, isPortraitMode);
-             statusElement.textContent = statusText || 'Memuat konten eksternal...';
-        }
         
         // --- Logic Utama ---
         if (encodedUrl) {
@@ -238,16 +248,11 @@
 
                 } else if (isVimeo) {
                     // Vimeo dimuat langsung dan ditunda 2 detik
-                    const embedUrl = mediaUrl.includes('?') ? mediaUrl + '&autoplay=1' : mediaUrl + '?autoplay=1';
-                    const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-                    
-                    delayAndDisplay(iframeContent, isPortraitMode);
-                    statusElement.textContent = 'Memuat pemutar Vimeo...';
+                    loadUniversalIframe(mediaUrl, isPortraitMode, 'Memuat pemutar Vimeo...');
 
                 } else if (isDirectVideo) {
                     // File Video Langsung
                     const mediaContent = `<video controls autoplay><source src="${mediaUrl}"></video>`;
-                    
                     delayAndDisplay(mediaContent, isPortraitMode);
                     statusElement.textContent = 'Memuat video langsung...';
 
@@ -258,7 +263,7 @@
                     statusElement.textContent = 'Foto dimuat.';
 
                 } else {
-                    // 🌟 FALLBACK: Mencoba memuat link sebagai IFRAME Universal (apapun sumbernya)
+                    // 🌟 FALLBACK: Mencoba memuat link sebagai IFRAME Universal dengan Autoplay
                     loadUniversalIframe(mediaUrl, isPortraitMode);
                 }
 
