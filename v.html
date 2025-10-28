@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Utama tetap sama */
+        /* CSS Utama */
         body { 
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
@@ -32,7 +32,7 @@
         .media-container { margin-top: 20px; border-radius: 8px; overflow: hidden; }
         #mediaDisplay { width: 100%; background-color: #000; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
         
-        /* Container Responsif (16:9 Landscape default) */
+        /* Container Responsif */
         .media-responsive {
             position: relative;
             padding-bottom: 56.25%; 
@@ -53,32 +53,49 @@
         }
         .media-responsive.is-portrait { padding-bottom: 177.77%; max-width: 400px; margin: 0 auto; }
 
-        /* 🌟 CSS BARU untuk Thumbnail YouTube */
-        .youtube-thumb {
+        /* 🌟 CSS BARU untuk Thumbnail YouTube dan Tombol Play */
+        .youtube-thumb-wrapper {
+            position: relative;
             cursor: pointer;
-            background-size: cover;
-            background-position: center;
-            display: block;
-        }
-        .youtube-thumb::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.64-5.69C54.64.06 34 0 34 0S13.36.06 7.12 2.05c-3.15.28-4.85 2.76-5.64 5.69C.06 13.06 0 24 0 24s.06 10.94 1.48 16.26c.78 2.93 2.49 5.41 5.64 5.69C13.36 47.94 34 48 34 48s20.64 0 26.88-1.99c3.15-.28 4.85-2.76 5.64-5.69C67.94 34.94 68 24 68 24s-.06-10.94-1.48-16.26z" fill="#f00"/><path d="M45 24l-14-10v20z" fill="#fff"/></svg>') no-repeat center;
-            background-size: 68px 48px;
-            opacity: 0.8;
-            transition: opacity .1s cubic-bezier(0, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: black; /* Warna default jika thumbnail gagal dimuat */
         }
-        .youtube-thumb:hover::after {
+        .youtube-thumb-wrapper img {
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        .youtube-thumb-wrapper:hover img {
             opacity: 1;
+        }
+        .play-button {
+            position: absolute;
+            width: 90px;
+            height: 60px;
+            background: rgba(255, 0, 0, 0.8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background 0.3s;
+        }
+        .play-button:hover {
+            background: red;
+        }
+        .play-button::before {
+            content: '▶️';
+            font-size: 30px;
+            color: white;
+            padding-left: 5px; /* Sedikit geser ke kanan agar terlihat di tengah */
         }
 
         /* Description Section */
         .description-section { margin-top: 40px; padding: 25px; border-top: 2px solid #e9ecef; text-align: left; color: #495057; font-size: 15px; }
-        .description-section h3 { color: #2c3e50; margin-bottom: 15px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -92,7 +109,7 @@
         
         <div class="description-section">
             <h3>Tentang UpHosting</h3>
-            <p>Jika video lambat, coba klik thumbnail. UpHosting menggunakan link pihak ketiga (YouTube/Vimeo) untuk memuat media Anda.</p>
+            <p>Jika video lambat dimuat, coba klik tombol play di thumbnail. UpHosting menggunakan link pihak ketiga (YouTube/Vimeo) untuk memuat media Anda.</p>
         </div>
     </div>
 
@@ -116,27 +133,37 @@
             }
             const videoId = videoIdMatch[1];
             
-            // Link thumbnail YouTube (resolusi sedang)
+            // Menggunakan link thumbnail langsung (resolusi tinggi)
             const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
             const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
 
             const thumbnailElement = document.createElement('div');
-            thumbnailElement.className = 'youtube-thumb';
-            thumbnailElement.style.backgroundImage = `url('${thumbnailUrl}')`;
+            thumbnailElement.className = 'youtube-thumb-wrapper';
             
-            // Bungkus thumbnail dengan wrapper
+            // Tambahkan gambar thumbnail
+            const imgElement = document.createElement('img');
+            imgElement.src = thumbnailUrl;
+            imgElement.alt = "YouTube Thumbnail";
+            thumbnailElement.appendChild(imgElement);
+
+            // Tambahkan tombol play sederhana
+            const playButton = document.createElement('div');
+            playButton.className = 'play-button';
+            thumbnailElement.appendChild(playButton);
+            
+            // Bungkus thumbnail dengan wrapper responsif
             mediaDisplay.innerHTML = wrapMedia('', isPortraitMode);
             const wrapper = mediaDisplay.querySelector('.media-responsive');
             wrapper.appendChild(thumbnailElement);
             
-            statusElement.textContent = 'Klik untuk memuat video YouTube.';
+            statusElement.textContent = 'Klik tombol Play untuk memuat video YouTube.';
 
-            // Pasang event listener: ketika thumbnail diklik, ganti dengan iframe
+            // Pasang event listener pada wrapper thumbnail/tombol
             thumbnailElement.addEventListener('click', () => {
                 const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                 wrapper.innerHTML = iframeContent;
                 statusElement.textContent = 'Memuat pemutar YouTube...';
-            }, { once: true }); // Hanya perlu dijalankan sekali
+            }, { once: true }); 
         }
         
         // --- Logic Utama ---
@@ -153,11 +180,11 @@
                 
                 
                 if (isYouTube) {
-                    // Gunakan fungsi lazy load YouTube (Thumbnail)
+                    // Gunakan fungsi lazy load YouTube baru (dengan thumbnail dan tombol HTML)
                     loadYouTubeVideo(mediaUrl, isPortraitMode);
 
                 } else if (isVimeo) {
-                    // Vimeo harus dimuat langsung (tidak ada solusi thumbnail yang mudah)
+                    // Vimeo dimuat langsung
                     const embedUrl = mediaUrl.includes('?') ? mediaUrl + '&autoplay=1' : mediaUrl + '?autoplay=1';
                     const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                     mediaDisplay.innerHTML = wrapMedia(iframeContent, isPortraitMode);
