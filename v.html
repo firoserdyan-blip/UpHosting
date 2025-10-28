@@ -16,13 +16,13 @@
         body { 
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
-            padding: 20px; 
+            padding: 20px; /* Padding default untuk PC */
             background-color: #f8f9fa; 
             color: #343a40; 
             line-height: 1.6;
         }
         .container { 
-            max-width: 1050px; /* 🌟 PERUBAHAN: Lebar kontainer utama diperbesar untuk tampilan video yang lebih besar */
+            max-width: 1050px; /* Lebar maksimal untuk PC */
             margin: 20px auto; 
             background-color: white; 
             padding: 30px; 
@@ -130,6 +130,25 @@
 
         /* Description Section */
         .description-section { margin-top: 40px; padding: 25px; border-top: 2px solid #e9ecef; text-align: left; color: #495057; font-size: 15px; }
+
+        /* 💥 MEDIA QUERY: PENGATURAN KHUSUS UNTUK TAMPILAN PONSEL (Video Lebih Besar) */
+        @media (max-width: 600px) {
+            body {
+                padding: 5px; /* Kurangi padding body di ponsel */
+            }
+            .container {
+                padding: 10px; /* Kurangi padding container di ponsel */
+                border-radius: 0; /* Hilangkan border radius untuk tampilan lebih edge-to-edge */
+                margin: 0 auto; /* Hilangkan margin atas/bawah */
+                box-shadow: none; /* Hilangkan bayangan untuk kesan lebih native */
+                max-width: 100%; /* Pastikan mengambil lebar penuh */
+            }
+            h1 {
+                margin-top: 5px;
+                margin-bottom: 10px;
+                font-size: 1.5em;
+            }
+        }
     </style>
 </head>
 <body>
