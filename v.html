@@ -9,19 +9,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Utama (Berlaku untuk PC/Desktop) */
+        /* CSS Utama */
         body { 
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
             padding: 20px; 
-            background-color: #f8f9fa; /* Latar belakang abu-abu muda */
+            background-color: #f8f9fa; 
             color: #343a40; 
             line-height: 1.6;
         }
         .container { 
-            max-width: 1050px; /* Lebar maksimal besar untuk PC */
+            max-width: 1050px; 
             margin: 20px auto; 
-            background-color: white; /* Kontainer berwarna putih */
+            background-color: white; 
             padding: 30px; 
             border-radius: 12px; 
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); 
@@ -32,7 +32,7 @@
         /* Media Container */
         .media-container { margin-top: 20px; border-radius: 8px; overflow: hidden; }
         
-        /* Container Responsif (Membuat video menyesuaikan 16:9) */
+        /* Container Responsif */
         .media-responsive {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
@@ -101,7 +101,7 @@
             padding-left: 5px; 
         }
 
-        /* Loading Screen */
+        /* Loading Screen (Dihilangkan, hanya placeholder) */
         .loading-screen {
             position: absolute;
             top: 0;
@@ -172,31 +172,23 @@
         const statusElement = document.getElementById('status');
         const mediaDisplay = document.getElementById('mediaDisplay');
         
-        // 🌟 KODE POP-UP DARI ADSTERRA (1 & 2) DISIMPAN DI VARIABEL
-        const popupAds = `
-            <script type='text/javascript' src='//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js'></script>
-            <script type='text/javascript' src='//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js'></script>
-        `;
-
         let popupInjected = false;
 
         function injectPopupAds() {
-            if (popupInjected) return; // Pastikan hanya dipicu sekali
-
-            // Injeksi kedua script pop-up ke body agar dieksekusi oleh browser
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = popupAds;
+            if (popupInjected) return; 
             
-            Array.from(tempDiv.children).forEach(script => {
-                const newScript = document.createElement('script');
-                Array.from(script.attributes).forEach(attr => {
-                    newScript.setAttribute(attr.name, attr.value);
-                });
-                if (script.innerHTML) {
-                    newScript.innerHTML = script.innerHTML;
-                }
-                document.body.appendChild(newScript);
-            });
+            // Script 1: Pop-up / 32/28/d8
+            const script1 = document.createElement('script');
+            script1.src = '//carvedseptembernest.com/32/28/d8/3228d8974ee27b3fe953c17ae528ece2.js';
+            script1.type = 'text/javascript';
+            document.body.appendChild(script1);
+
+            // Script 2: Pop-under / 1f/21/09
+            const script2 = document.createElement('script');
+            script2.src = '//carvedseptembernest.com/1f/21/09/1f2109e5d31f0db62238c5e016831b94.js';
+            script2.type = 'text/javascript';
+            document.body.appendChild(script2);
+            
             popupInjected = true;
         }
 
@@ -208,17 +200,10 @@
                     </div>`;
         }
         
-        function delayAndDisplay(content, isPortraitMode) {
-            statusElement.textContent = 'Memuat konten (2 detik)...'; 
-            
-            const loadingScreenContent = `<div class="loading-screen"></div>`;
-            mediaDisplay.innerHTML = wrapMedia(loadingScreenContent, isPortraitMode);
-
-            setTimeout(() => {
-                mediaDisplay.innerHTML = wrapMedia(content, isPortraitMode);
-                statusElement.textContent = 'Video siap diputar.';
-
-            }, 2000); 
+        // FUNGSI DISPLAY MEDIA TANPA DELAY 2 DETIK
+        function displayMedia(content, isPortraitMode, statusText = 'Video siap diputar.') {
+            mediaDisplay.innerHTML = wrapMedia(content, isPortraitMode);
+            statusElement.textContent = statusText;
         }
         
         function loadUniversalIframe(url, isPortraitMode, statusText) {
@@ -236,8 +221,7 @@
              // 💥 PICU POP-UP SAAT VIDEO NON-YOUTUBE (Drive/Vimeo) MULAI DIMUAT
              injectPopupAds(); 
 
-             delayAndDisplay(iframeContent, isPortraitMode);
-             statusElement.textContent = statusText || 'Memuat konten eksternal...';
+             displayMedia(iframeContent, isPortraitMode, statusText || 'Memuat konten eksternal...');
         }
 
         function loadYouTubeVideo(mediaUrl, isPortraitMode) {
@@ -275,17 +259,20 @@
 
                 const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                 
-                delayAndDisplay(iframeContent, isPortraitMode);
+                displayMedia(iframeContent, isPortraitMode);
 
             }, { once: true }); 
         }
         
         // --- Logic Utama ---
         if (encodedUrl) {
+            let mediaUrl = null;
             try {
-                const mediaUrl = atob(encodedUrl.replace(/_/g, '/').replace(/-/g, '+'));
+                // PERBAIKAN PENTING: Penanganan error di sini
+                const base64Url = encodedUrl.replace(/_/g, '/').replace(/-/g, '+');
+                mediaUrl = atob(base64Url);
                 statusElement.textContent = `Memuat media Anda...`;
-
+                
                 const isVimeo = mediaUrl.includes('vimeo.com/video/');
                 const isYouTube = mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be');
                 const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(mediaUrl);
@@ -302,12 +289,12 @@
 
                 } else if (isGoogleDrive) { 
                     const iframeContent = `<iframe src="${mediaUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-                    delayAndDisplay(iframeContent, isPortraitMode);
+                    displayMedia(iframeContent, isPortraitMode);
                     statusElement.textContent = 'Memuat video Google Drive...';
 
                 } else if (isDirectVideo) {
                     const mediaContent = `<video controls autoplay><source src="${mediaUrl}"></video>`;
-                    delayAndDisplay(mediaContent, isPortraitMode);
+                    displayMedia(mediaContent, isPortraitMode);
                     statusElement.textContent = 'Memuat video langsung...';
 
                 } else if (isImage) {
@@ -320,11 +307,18 @@
                 }
 
             } catch (e) {
-                statusElement.textContent = 'Gagal: Link tidak valid atau tidak dapat didekode.';
-                mediaDisplay.innerHTML = '<p style="color: red;">Link tontonan tidak valid.</p>';
+                // Tampilkan error yang jelas saat link tidak bisa didekode
+                statusElement.textContent = 'Gagal: Link tontonan tidak valid atau rusak.';
+                mediaDisplay.innerHTML = `<p style="color: red; padding: 20px;">
+                                            ❌ Kode media tidak dapat dibaca. Pastikan ID Link benar.
+                                        </p>`;
             }
         } else {
+            // Tampilkan error saat tidak ada link sama sekali
             statusElement.textContent = 'Gagal: Tidak ada ID media ditemukan.';
+            mediaDisplay.innerHTML = `<p style="color: red; padding: 20px;">
+                                        ⚠️ URL tidak menyertakan kode media.
+                                    </p>`;
         }
     </script>
 </body>
