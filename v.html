@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Menonton di UpHosting</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f0f2f5; }
+        .container { max-width: 800px; margin: 40px auto; background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .media-container { margin-top: 20px; }
+        #mediaDisplay { width: 100%; height: auto; min-height: 400px; background-color: black; display: flex; align-items: center; justify-content: center; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Menonton di UpHosting</h1>
+        
+        <div class="media-container">
+            <p id="status" style="color: #3498db; font-weight: bold;">Memuat konten...</p>
+            
+            <div id="mediaDisplay">
+                </div>
+        </div>
+        
+        <p style="margin-top: 40px; color: red; font-weight: bold;">[TEMPAT IKLAN ADSTERRA DI SINI]</p>
+    </div>
+
+    <script>
+        // 1. Dapatkan ID terenkripsi dari URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedUrl = urlParams.get('id');
+        const statusElement = document.getElementById('status');
+        const mediaDisplay = document.getElementById('mediaDisplay');
+
+        if (encodedUrl) {
+            try {
+                // 2. Dekode ID kembali ke URL Asli
+                // Mengembalikan karakter yang diubah saat encoding
+                const mediaUrl = atob(encodedUrl.replace(/_/g, '/').replace(/-/g, '+'));
+                statusElement.textContent = `Menampilkan konten...`;
+
+                // 3. Tentukan Tipe Konten
+                const isVimeo = mediaUrl.includes('vimeo.com/video/');
+                const isYouTube = mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be');
+                const isImage = mediaUrl.endsWith('.jpg') || mediaUrl.endsWith('.png') || mediaUrl.endsWith('.gif');
+                
+                if (isVimeo || isYouTube) {
+                    let embedUrl = mediaUrl;
+                    
+                    if (isYouTube) {
+                        // Handle YouTube Embed
+                        if (mediaUrl.includes('youtube.com/watch?v=')) {
+                            const videoId = mediaUrl.split('v=')[1].split('&')[0];
+                            embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                        } else if (mediaUrl.includes('youtu.be/')) {
+                             const videoId = mediaUrl.split('youtu.be/')[1].split('?')[0];
+                             embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                        }
+                    } else if (isVimeo) {
+                        // Handle Vimeo Embed
+                         embedUrl = mediaUrl.includes('?') ? mediaUrl + '&autoplay=1' : mediaUrl + '?autoplay=1';
+                    }
+
+                    // Tampilkan Iframe/Video Player
+                    mediaDisplay.innerHTML = `
+                        <iframe width="100%" height="400" 
+                            src="${embedUrl}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    `;
+                } else if (isImage) {
+                    // Tampilkan Gambar
+                    statusElement.textContent = 'Menampilkan Foto...';
+                    mediaDisplay.innerHTML = `<img src="${mediaUrl}" style="max-width: 100%; height: auto; max-height: 600px; display: block; margin: auto;">`;
+                } else {
+                    // Tampilkan file video langsung (.mp4, dll.)
+                    statusElement.textContent = 'Menampilkan Video File...';
+                     mediaDisplay.innerHTML = `<video controls autoplay style="max-width: 100%; height: auto; min-height: 400px; background: black;"><source src="${mediaUrl}"></video>`;
+                }
+
+            } catch (e) {
+                statusElement.textContent = 'Gagal: Link tidak valid atau tidak dapat didekode.';
+                mediaDisplay.innerHTML = '<p style="color: red;">Link tontonan tidak valid.</p>';
+            }
+        } else {
+            statusElement.textContent = 'Gagal: Tidak ada ID media ditemukan.';
+        }
+    </script>
+</body>
+</html>
