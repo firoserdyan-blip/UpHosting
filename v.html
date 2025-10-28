@@ -39,7 +39,7 @@
             overflow: hidden;
             max-width: 100%;
             border-radius: 8px;
-            background-color: black; /* Default background */
+            background-color: black; /* Penting: Warna default kontainer saat loading adalah hitam */
         }
         .media-responsive iframe, 
         .media-responsive video, 
@@ -49,7 +49,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* 🌟 PERBAIKAN: Gunakan cover untuk iframe/video/thumb agar mengisi penuh */
             object-fit: cover; 
         }
         .media-responsive.is-portrait { 
@@ -58,21 +57,20 @@
             margin: 0 auto; 
         }
 
-        /* 🌟 Perbaikan Kritis: Thumbnail YouTube dan Tombol Play */
+        /* Thumbnail YouTube dan Tombol Play */
         .youtube-thumb-wrapper {
             position: relative;
             cursor: pointer;
             width: 100%;
             height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
         }
-        /* 🌟 PERBAIKAN: Pastikan gambar thumbnail mengisi wrapper */
         .youtube-thumb-wrapper img {
             width: 100%; 
             height: 100%;
-            object-fit: cover; /* Penting! */
+            object-fit: cover; 
             opacity: 0.8;
             transition: opacity 0.3s;
         }
@@ -80,7 +78,6 @@
             opacity: 1;
         }
         .play-button {
-            position: absolute;
             width: 90px;
             height: 60px;
             background: rgba(255, 0, 0, 0.8);
@@ -99,6 +96,22 @@
             font-size: 30px;
             color: white;
             padding-left: 5px; 
+        }
+
+        /* 🌟 CSS BARU: Loading Screen */
+        .loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white; 
+            font-size: 1.2em;
+            font-weight: 600;
         }
 
         /* Description Section */
@@ -130,6 +143,27 @@
             const portraitClass = isPortrait ? ' is-portrait' : '';
             return `<div class="media-responsive${portraitClass}">${content}</div>`;
         }
+        
+        // 🌟 FUNGSI BARU: Fungsi untuk menampilkan layar hitam 2 detik
+        function delayAndDisplay(content, isPortraitMode, statusLoadingText) {
+            statusElement.textContent = statusLoadingText;
+            
+            // 1. Tampilkan layar hitam loading (Iklan)
+            const loadingScreenContent = `
+                <div class="loading-screen">
+                    Memuat Iklan/Konten... (2 detik)
+                </div>
+            `;
+            mediaDisplay.innerHTML = wrapMedia(loadingScreenContent, isPortraitMode);
+
+            // 2. Tunda selama 2 detik
+            setTimeout(() => {
+                // 3. Setelah 2 detik, masukkan konten video/iframe yang sebenarnya
+                mediaDisplay.innerHTML = wrapMedia(content, isPortraitMode);
+                statusElement.textContent = 'Video siap diputar.';
+            }, 2000); // 2000 milidetik = 2 detik
+        }
+        
 
         function loadYouTubeVideo(mediaUrl, isPortraitMode) {
             const videoIdMatch = mediaUrl.match(/(?:v=|\/embed\/|youtu\.be\/|\/v\/|\/e\/|watch\?v=|&v=)([a-zA-Z0-9_-]{11})/);
@@ -163,8 +197,10 @@
 
             thumbnailElement.addEventListener('click', () => {
                 const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-                wrapper.innerHTML = iframeContent;
-                statusElement.textContent = 'Memuat pemutar YouTube...';
+                
+                // 🌟 Panggil delayAndDisplay untuk jeda 2 detik
+                delayAndDisplay(iframeContent, isPortraitMode, 'Menampilkan Iklan...');
+
             }, { once: true }); 
         }
         
@@ -187,15 +223,18 @@
                 } else if (isVimeo) {
                     const embedUrl = mediaUrl.includes('?') ? mediaUrl + '&autoplay=1' : mediaUrl + '?autoplay=1';
                     const iframeContent = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-                    mediaDisplay.innerHTML = wrapMedia(iframeContent, isPortraitMode);
-                    statusElement.textContent = 'Memuat pemutar Vimeo...';
+                    
+                    // 🌟 Panggil delayAndDisplay untuk jeda 2 detik
+                    delayAndDisplay(iframeContent, isPortraitMode, 'Memuat pemutar Vimeo (Iklan)...');
 
                 } else if (isDirectVideo) {
                     const mediaContent = `<video controls autoplay><source src="${mediaUrl}"></video>`;
-                    mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode);
-                    statusElement.textContent = 'Video dimuat.';
+                    
+                    // 🌟 Panggil delayAndDisplay untuk jeda 2 detik
+                    delayAndDisplay(mediaContent, isPortraitMode, 'Memuat video (Iklan)...');
 
                 } else if (isImage) {
+                    // Gambar dimuat instan
                     const mediaContent = `<img src="${mediaUrl}" alt="Media UpHosting">`;
                     mediaDisplay.innerHTML = wrapMedia(mediaContent, isPortraitMode); 
                     statusElement.textContent = 'Foto dimuat.';
